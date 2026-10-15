@@ -1,0 +1,101 @@
+{
+  "logistic_regression": {
+    "accuracy": 0.9202,
+    "precision": 0.9271,
+    "recall": 0.9536,
+    "f1": 0.9401,
+    "roc_auc": 0.9793,
+    "confusion_matrix": {
+      "tn": 2936,
+      "fp": 493,
+      "fn": 305,
+      "tp": 6266
+    }
+  },
+  "decision_tree": {
+    "accuracy": 0.9064,
+    "precision": 0.9079,
+    "recall": 0.9543,
+    "f1": 0.9306,
+    "roc_auc": 0.9652,
+    "confusion_matrix": {
+      "tn": 2793,
+      "fp": 636,
+      "fn": 300,
+      "tp": 6271
+    }
+  },
+  "random_forest": {
+    "accuracy": 0.9163,
+    "precision": 0.919,
+    "recall": 0.9569,
+    "f1": 0.9376,
+    "roc_auc": 0.9772,
+    "confusion_matrix": {
+      "tn": 2875,
+      "fp": 554,
+      "fn": 283,
+      "tp": 6288
+    }
+  },
+  "gradient_boosting": {
+    "accuracy": 0.9199,
+    "precision": 0.9284,
+    "recall": 0.9515,
+    "f1": 0.9398,
+    "roc_auc": 0.9796,
+    "confusion_matrix": {
+      "tn": 2947,
+      "fp": 482,
+      "fn": 319,
+      "tp": 6252
+    }
+  },
+  "linear_coefficients": {
+    "top_positive": [
+      {
+        "feature": "HistoryOfBacklogs_No",
+        "coefficient": 1.3854073362175445
+      },
+      {
+        "feature": "SoftSkillsRating",
+        "coefficient": 1.1003591782807505
+      },
+      {
+        "feature": "Internships",
+        "coefficient": 1.0379472755022061
+      },
+      {
+        "feature": "SGPA_Sem5",
+        "coefficient": 0.8409581663964796
+      },
+      {
+        "feature": "Projects",
+        "coefficient": 0.8212455643958043
+      }
+    ],
+    "top_negative": [
+      {
+        "feature": "City_Pune",
+        "coefficient": -0.02383884067610925
+      },
+      {
+        "feature": "City_Kolkata",
+        "coefficient": -0.1479974881153047
+      },
+      {
+        "feature": "CGPA_Tier_Low",
+        "coefficient": -0.18832785094638757
+      },
+      {
+        "feature": "HistoryOfBacklogs_Yes",
+        "coefficient": -0.8243972170910988
+      },
+      {
+        "feature": "CGPA",
+        "coefficient": -2.2481698865117825
+      }
+    ],
+    "intercept": 0.5720279232835959
+  }
+}

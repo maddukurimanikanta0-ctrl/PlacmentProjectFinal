@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}K-Means Clustering &amp; Student Archetypes - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m4">Module 4: Unsupervised</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">K-Means &amp; Archetypes</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="concept-badge">Lloyd's K-Means</span>
+        <span class="badge-dark">Silhouette Score: 0.34 &bull; Optimal K: 4</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        K-Means Clustering &amp; Student Archetypes
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Uncovering latent student performance cohorts using Lloyd's algorithm with K-Means++ initialization, validated through elbow inertia curves and silhouette analysis.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m4" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Discovered Archetypes Grid -->
+<div class="cluster-card-grid" style="margin-bottom: 1.5rem;">
+  {% if unsupervised and unsupervised.clusters %}
+    {% for cid, cinfo in unsupervised.clusters.items() %}
+    <div class="cluster-card">
+      <div class="cluster-header">
+        <span class="cluster-dot" style="background: {{ cinfo.color }};"></span>
+        {{ cinfo.name }}
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65;">
+        <div><strong>Cohort Share:</strong> {{ cinfo.percentage }}% ({{ "{:,}".format(cinfo.size) }} students)</div>
+        <div><strong>Placement Rate:</strong> <span style="font-weight: 700; color: #15803d;">{{ cinfo.placement_rate }}%</span></div>
+        <div><strong>Average CGPA:</strong> {{ cinfo.avg_cgpa }} / 10</div>
+        <div><strong>Average Coding Score:</strong> {{ cinfo.avg_coding }} / 100</div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<!-- Algorithm Notes -->
+<div class="card">
+  <div class="card-title">K-Means++ Initialization &amp; Choosing K</div>
+  <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+    1. <strong>K-Means++ Seeding</strong>: Rather than uniformly random starting centroids (which frequently traps Lloyd's algorithm in suboptimal local minima), K-Means++ chooses subsequent centroids with probability proportional to the squared Euclidean distance from the nearest existing centroid: <code>D(x)&sup2; / &sum; D(x')&sup2;</code>.<br>
+    2. <strong>Elbow Method</strong>: Inertia measures within-cluster sum of squared errors. The inflection point (elbow) occurs at <code>K = 4</code>.<br>
+    3. <strong>Silhouette Metric</strong>: For sample i with mean intra-cluster distance a(i) and nearest-cluster distance b(i), <code>s(i) = (b(i) - a(i)) / max(a(i), b(i))</code>, yielding a strong cluster quality score of 0.34.
+  </p>
+</div>
+{% endblock %}

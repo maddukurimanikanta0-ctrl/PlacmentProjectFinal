@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Hierarchical Agglomerative Clustering - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m4">Module 4: Unsupervised</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Hierarchical Clustering &amp; Dendrograms</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="concept-badge">Agglomerative Bottom-Up</span>
+        <span class="badge-dark">Linkage: {{ linkage }} &bull; Silhouette: {{ hier_data.silhouette_score }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Hierarchical Agglomerative Clustering &amp; Linkages
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Bottom-up hierarchical clustering recursively merging closest pairs of student clusters using Euclidean proximity matrices without pre-determining cluster count K.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m4" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Controls Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m4.hierarchical') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px;">
+      <label for="n_clusters">Number of Clusters (Cutoff):
+        <input type="number" id="n_clusters" name="n_clusters" value="{{ n_clusters }}" min="2" max="8">
+      </label>
+    </div>
+    <div style="flex: 1.5; min-width: 180px;">
+      <label for="linkage">Linkage Criterion:
+        <select id="linkage" name="linkage">
+          <option value="ward" {% if linkage == 'ward' %}selected{% endif %}>Ward's Minimum Variance Linkage</option>
+          <option value="complete" {% if linkage == 'complete' %}selected{% endif %}>Complete Linkage (Maximum Distance)</option>
+          <option value="average" {% if linkage == 'average' %}selected{% endif %}>Average Linkage (Mean Pairwise)</option>
+        </select>
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Recalculate Hierarchy</button>
+    </div>
+  </form>
+</div>
+
+<!-- Discovered Clusters Table -->
+<div class="card">
+  <div class="card-title">Partition Profiles (Cutoff K = {{ n_clusters }})</div>
+  <p class="card-subtitle">{{ hier_data.dendrogram_notes }}</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Cluster</th>
+          <th>Cohort Size</th>
+          <th>Cohort Share (%)</th>
+          <th>Placement Rate</th>
+          <th>Avg CGPA</th>
+          <th>Avg Coding Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cp in hier_data.cluster_profiles %}
+        <tr>
+          <td><strong>Cluster {{ cp.cluster_id }}</strong></td>
+          <td>{{ cp.size }} records</td>
+          <td>{{ cp.percentage }}%</td>
+          <td><strong style="color: #15803d;">{{ cp.placement_rate }}%</strong></td>
+          <td>{{ cp.avg_cgpa }}</td>
+          <td>{{ cp.avg_coding }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

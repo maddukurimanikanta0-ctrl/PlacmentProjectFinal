@@ -1,0 +1,88 @@
+<!-- Module 5 View Container -->
+<div class="module-view-container" id="module-view-m5">
+  <div class="module-header-banner">
+    <div class="module-header-info">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; align-items: center;">
+        <span class="module-badge">Module 5 &bull; CO5</span>
+        <span class="concept-badge">Evaluation &amp; Calibration</span>
+      </div>
+      <h2>Model Evaluation, Selection, and Calibration</h2>
+      <p>Rigorous split discipline, cross-validation, comprehensive error metrics, probability reliability curves, and learning curve bias-variance diagnosis.</p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('m5.validation') }}" class="btn btn-primary">&rarr; 50-Sample Calibration Lab</a>
+    </div>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Discipline</span>
+        <h3 class="concept-title">3-Way Split &amp; Leak Prevention</h3>
+        <p class="concept-summary">Train (70%) / Validation (15%) / Test (15%) discipline ensuring the test set remains untouched by all modelling choices.</p>
+        <ul class="concept-bullets">
+          <li>Eliminating data leakage: fit transformers ONLY on train</li>
+          <li>Stratified sampling preserving placement ratio</li>
+          <li>Unbiased generalization error estimation</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m5.holdout') }}" class="concept-action-btn">Explore 3-Way Split &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Cross-Validation</span>
+        <h3 class="concept-title">Stratified K-Fold Cross-Validation</h3>
+        <p class="concept-summary">K=5 stratified cross-validation verifying model stability across subsets with mean and standard deviation reporting.</p>
+        <ul class="concept-bullets">
+          <li>Preserves 67.6% placed ratio across each fold</li>
+          <li>Nested CV preview for hyperparameter tuning</li>
+          <li>Variance assessment across fold iterations</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m5.kfold') }}" class="concept-action-btn">Explore K-Fold CV &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Metrics Suite</span>
+        <h3 class="concept-title">Classification &amp; Regression Metrics</h3>
+        <p class="concept-summary">Beyond accuracy: Confusion matrix, Precision, Recall, F1, ROC-AUC, PR-AUC, and RMSE vs MAE outlier sensitivity.</p>
+        <ul class="concept-bullets">
+          <li>Threshold tuning for precision vs recall tradeoffs</li>
+          <li>PR-AUC for class imbalance protection</li>
+          <li>RMSE squaring penalty vs robust MAE</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m5.metrics') }}" class="concept-action-btn">Explore Metrics Suite &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Calibration Lab</span>
+        <h3 class="concept-title">50-Sample Probability Calibration</h3>
+        <p class="concept-summary">Why a 0.7 prediction should mean 70% likely. Comparing raw logits with Platt Scaling (sigmoid) and Isotonic regression.</p>
+        <ul class="concept-bullets">
+          <li>Evaluated on exactly 50 stratified held-out student records</li>
+          <li>Brier score optimization and reliability diagrams</li>
+          <li>Calibrated probabilities for risk-critical decisions</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m5.validation') }}" class="concept-action-btn">Launch Calibration Lab &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Diagnosis</span>
+        <h3 class="concept-title">Hyperparameter Tuning &amp; Learning Curves</h3>
+        <p class="concept-summary">Diagnosing high bias (underfitting) vs high variance (overfitting) using diagnostic learning curves and Bayesian optimization.</p>
+        <ul class="concept-bullets">
+          <li>Grid search vs Random search vs Optuna (TPE)</li>
+          <li>Learning curves plotting train vs validation score</li>
+          <li>McNemar's test for classifier comparison</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m5.tuning') }}" class="concept-action-btn">Inspect Tuning &amp; Curves &rarr;</a>
+    </div>
+  </div>
+</div>

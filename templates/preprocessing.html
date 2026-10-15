@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Feature Preprocessing &amp; Normalization - PlacementPredict{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m2">Module 2: Supervised Linear Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Feature Scaling, Encoding &amp; Preprocessing</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 2 &bull; CO2</span>
+        <span class="concept-badge">Feature Pipeline</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700; margin: 0 0 0.4rem 0;">
+        Feature Scaling, Categorical Encoding &amp; Skew Defense
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0; max-width: 900px;">
+        StandardScaler vs MinMaxScaler comparison, when scaling is vital for gradient descent vs invariant for trees, OneHotEncoder vectors, and scikit-learn ColumnTransformer design.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m2" class="btn-back-dashboard">
+        &larr; Back to Module 2 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if error %}
+    <div class="alert alert-error">
+        <strong>Error during preprocessing:</strong> {{ error }}
+    </div>
+{% else %}
+
+<div class="summary-grid">
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">1. Data Cleaning &amp; Imputation</h3>
+        <ul style="line-height: 1.8;">
+            <li>Duplicate Rows Purged: <strong style="color: var(--accent-emerald);">{{ cleaning_info.duplicates_removed }}</strong></li>
+            <li>Median-Imputed Features: <strong>{{ cleaning_info.imputed_cols | join(', ') }}</strong></li>
+            <li>Whitespace Stripped: <strong>All Categorical &amp; String features</strong></li>
+        </ul>
+        <p class="hint">Guarantees zero null contamination and zero training-serving skew before mathematical transformations.</p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">2. Encoding Strategy</h3>
+        <ul style="line-height: 1.8;">
+            <li>Categorical Encoder: <strong>OneHotEncoder (handle_unknown='ignore')</strong></li>
+            <li>Categorical Fields: <strong>{{ cat_features | join(', ') }}</strong></li>
+            <li>Missing Imputation: <strong>SimpleImputer (strategy='most_frequent')</strong></li>
+        </ul>
+        <p class="hint">Expands nominal classes into orthogonal binary indicator vectors.</p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">3. Feature Normalization &amp; Scaling</h3>
+        <ul style="line-height: 1.8;">
+            <li>Numeric Scaler: <strong>StandardScaler (zero mean, unit variance) / MinMaxScaler</strong></li>
+            <li>Partition Discipline: <strong>80% Train, 20% Held-Out Test (Stratified)</strong></li>
+            <li>Transformed Feature Count: <strong style="color: var(--accent-cyan);">{{ columns | length }} columns</strong></li>
+        </ul>
+        <p class="hint">Crucial for gradient descent convergence and Ridge/Lasso regularisation penalties.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Normalized Numerical Features Sample (First 10 Rows)</div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in train_rows %}
+                <tr>
+                    {% for element in row %}
+                    <td>{{ "%.4f"|format(element) if element is number else element }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">🏗️ Production Scikit-Learn ColumnTransformer Architecture</div>
+    <pre>
+ColumnTransformer(
+    transformers=[
+        ('num', Pipeline([
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler())
+        ]), numeric_columns),
+        ('cat', Pipeline([
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+        ]), categorical_columns)
+    ],
+    remainder='drop'
+)
+    </pre>
+</div>
+
+<div class="card" style="text-align: center; padding: 1.25rem;">
+  <a href="{{ url_for('index') }}#m2" class="btn">&larr; Return to Module 2 Dashboard</a>
+</div>
+
+{% endif %}
+{% endblock %}

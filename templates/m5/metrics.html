@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Comprehensive Metrics &amp; Threshold Tuning - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m5">Module 5: Evaluation</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Comprehensive Metrics Suite</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 5 &bull; CO5</span>
+        <span class="concept-badge">Evaluation Metrics</span>
+        <span class="badge-dark">ROC-AUC: {{ metrics_data.roc_auc }} &bull; PR-AUC: {{ metrics_data.pr_auc }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Comprehensive Metrics &amp; Decision Threshold Tuner
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Evaluating beyond naive accuracy: Precision/Recall tradeoffs, Confusion Matrix, Area Under ROC / PR curves, and RMSE vs MAE outlier sensitivity.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m5" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Threshold Tuning Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m5.metrics') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 2; min-width: 200px;">
+      <label for="threshold">Decision Cutoff Threshold: <strong>{{ threshold }}</strong>
+        <input type="range" id="threshold" name="threshold" value="{{ threshold }}" min="0.10" max="0.90" step="0.05" oninput="document.getElementById('thresh_val').innerText = this.value">
+      </label>
+      <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+        <span>0.10 (High Recall)</span>
+        <span id="thresh_val" style="font-weight: 700; color: var(--text-primary);">{{ threshold }}</span>
+        <span>0.90 (High Precision)</span>
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Apply Threshold &rarr;</button>
+    </div>
+  </form>
+</div>
+
+<!-- Classification Metrics KPI Grid -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Accuracy</div>
+    <div class="kpi-val">{{ (metrics_data.accuracy * 100)|round(2) }}%</div>
+    <div class="kpi-sub">Overall Correct Inferences</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Precision</div>
+    <div class="kpi-val" style="color: #15803d;">{{ (metrics_data.precision * 100)|round(2) }}%</div>
+    <div class="kpi-sub">TP / (TP + FP)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Recall (Sensitivity)</div>
+    <div class="kpi-val" style="color: #0369a1;">{{ (metrics_data.recall * 100)|round(2) }}%</div>
+    <div class="kpi-sub">TP / (TP + FN)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">F1-Score</div>
+    <div class="kpi-val">{{ metrics_data.f1_score }}</div>
+    <div class="kpi-sub">Harmonic Mean of P &amp; R</div>
+  </div>
+</div>
+
+<!-- Confusion Matrix & Regression Comparison -->
+<div class="summary-grid">
+  <div class="card">
+    <div class="card-title">Threshold Confusion Matrix (&tau; = {{ threshold }})</div>
+    <p class="card-subtitle">{{ metrics_data.tradeoff_notes }}</p>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Actual \ Pred</th>
+            <th>Pred Not Placed</th>
+            <th>Pred Placed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Actual Not Placed</strong></td>
+            <td>TN: <strong>{{ metrics_data.confusion_matrix.tn }}</strong></td>
+            <td>FP: <strong style="color: #dc2626;">{{ metrics_data.confusion_matrix.fp }}</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Actual Placed</strong></td>
+            <td>FN: <strong style="color: #dc2626;">{{ metrics_data.confusion_matrix.fn }}</strong></td>
+            <td>TP: <strong style="color: #15803d;">{{ metrics_data.confusion_matrix.tp }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Regression Metrics (Salary Package Model)</div>
+    <p class="card-subtitle">{{ reg_metrics.outlier_sensitivity }}</p>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Formula</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>RMSE</strong></td>
+            <td><code>&radic;(1/N &sum; (y - y&#770;)&sup2;)</code></td>
+            <td><strong>{{ reg_metrics.rmse }} LPA</strong></td>
+          </tr>
+          <tr>
+            <td><strong>MAE</strong></td>
+            <td><code>1/N &sum; |y - y&#770;|</code></td>
+            <td><strong>{{ reg_metrics.mae }} LPA</strong></td>
+          </tr>
+          <tr>
+            <td><strong>R&sup2; Score</strong></td>
+            <td><code>1 - SS_res / SS_tot</code></td>
+            <td><strong>{{ reg_metrics.r2_score }}</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

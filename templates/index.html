@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}PlacementPredict - ML System &amp; Academic Dashboard (M1–M6){% endblock %}
+
+{% block content %}
+<!-- KPI Summary Row -->
+{% include "partials/kpi_summary.html" %}
+
+<!-- ==================== 6 MAIN MODULES NAVIGATION ==================== -->
+<section class="module-navigation-section no-print">
+  <div class="module-nav-header">
+    <h2>Curriculum Modules (M1–M6)</h2>
+    <p>Select a module to filter its concepts and inspect its machine learning pipelines:</p>
+  </div>
+
+  <div class="module-cards-grid">
+    <!-- Module 1 Card -->
+    <div class="module-selector-card active" data-module="m1" onclick="selectModule('m1')">
+      <div class="module-card-top">
+        <span class="module-badge">Module 1</span>
+        <span class="module-count-pill">4 Models</span>
+      </div>
+      <div class="module-title">PlacementPredict System</div>
+      <div class="module-desc">The ML system lifecycle, request tracing, serving boundaries, schema ingestion &amp; EDA.</div>
+      <div class="module-status-line">
+        <span>Lifecycle &bull; Ingestion</span>
+        <span>View Concepts &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Module 2 Card -->
+    <div class="module-selector-card" data-module="m2" onclick="selectModule('m2')">
+      <div class="module-card-top">
+        <span class="module-badge">Module 2</span>
+        <span class="module-count-pill">4 Models</span>
+      </div>
+      <div class="module-title">Supervised Linear Models</div>
+      <div class="module-desc">Linear regression salary estimator, Ridge/Lasso regularization, logistic sigmoid &amp; softmax.</div>
+      <div class="module-status-line">
+        <span>Closed-Form &bull; GD</span>
+        <span>View Concepts &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Module 3 Card -->
+    <div class="module-selector-card" data-module="m3" onclick="selectModule('m3')">
+      <div class="module-card-top">
+        <span class="module-badge">Module 3</span>
+        <span class="module-count-pill">4 Models</span>
+      </div>
+      <div class="module-title">Tree-Based Ensembles</div>
+      <div class="module-desc">Decision trees, cost-complexity pruning, Random Forests, Gradient Boosting &amp; SHAP.</div>
+      <div class="module-status-line">
+        <span>Bagging &bull; GBDT</span>
+        <span>View Concepts &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Module 4 Card -->
+    <div class="module-selector-card" data-module="m4" onclick="selectModule('m4')">
+      <div class="module-card-top">
+        <span class="module-badge">Module 4</span>
+        <span class="module-count-pill">5 Models</span>
+      </div>
+      <div class="module-title">Unsupervised Learning</div>
+      <div class="module-desc">K-Means student archetypes, hierarchical dendrograms, DBSCAN density, PCA &amp; anomalies.</div>
+      <div class="module-status-line">
+        <span>Clusters &bull; Outliers</span>
+        <span>View Concepts &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Module 5 Card -->
+    <div class="module-selector-card" data-module="m5" onclick="selectModule('m5')">
+      <div class="module-card-top">
+        <span class="module-badge">Module 5</span>
+        <span class="module-count-pill">5 Models</span>
+      </div>
+      <div class="module-title">Evaluation &amp; Calibration</div>
+      <div class="module-desc">3-way split, Stratified K-Fold CV, ROC/PR curves, 50-sample Platt/Isotonic calibration lab.</div>
+      <div class="module-status-line">
+        <span>Reliability &bull; CV</span>
+        <span>View Concepts &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Module 6 Card -->
+    <div class="module-selector-card" data-module="m6" onclick="selectModule('m6')">
+      <div class="module-card-top">
+        <span class="module-badge">Module 6</span>
+        <span class="module-count-pill">5 Models</span>
+      </div>
+      <div class="module-title">ML Engineering (MLOps)</div>
+      <div class="module-desc">Feast feature stores, ONNX runtime, REST latency telemetry, PSI drift detection &amp; retraining.</div>
+      <div class="module-status-line">
+        <span>Production &bull; Drift</span>
+        <span>View Concepts &rarr;</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MODULE VIEWS (M1 to M6) ==================== -->
+{% include "partials/m1_tab.html" %}
+{% include "partials/m2_tab.html" %}
+{% include "partials/m3_tab.html" %}
+{% include "partials/m4_tab.html" %}
+{% include "partials/m5_tab.html" %}
+{% include "partials/m6_tab.html" %}
+
+<!-- ==================== INTERACTIVE PREDICTION ENGINE ==================== -->
+{% include "partials/prediction_engine.html" %}
+
+<!-- Quick Page Directory for Audit Verification -->
+<div class="card no-print" style="margin-top: 2rem;">
+  <div class="card-title">Comprehensive Model Page Directory (M1–M6)</div>
+  <p class="card-subtitle">Direct routes to all standalone model exploration workbenches:</p>
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <a href="{{ url_for('m1.data_loading') }}" class="btn-secondary">Dataset Ingestion</a>
+    <a href="{{ url_for('m1.eda') }}" class="btn-secondary">EDA Analytics</a>
+    <a href="{{ url_for('m1.preprocessing') }}" class="btn-secondary">Preprocessing</a>
+    <a href="{{ url_for('m2.linear_regression') }}" class="btn-secondary">Linear Regression</a>
+    <a href="{{ url_for('m2.logistic_regression') }}" class="btn-secondary">Logistic Regression</a>
+    <a href="{{ url_for('m3.tree_models') }}" class="btn-secondary">Tree Models Benchmark</a>
+    <a href="{{ url_for('m4.unsupervised') }}" class="btn-secondary">Unsupervised &amp; PCA</a>
+    <a href="{{ url_for('m5.validation') }}" class="btn-secondary">Validation &amp; Calibration</a>
+    <a href="{{ url_for('m6.monitoring') }}" class="btn-secondary">Production Drift Monitor</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Automated Retraining &amp; MLOps Lifecycle - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m6">Module 6: ML Engineering</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Automated Retraining Strategies</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 6 &bull; CO6</span>
+        <span class="concept-badge">Continuous Learning</span>
+        <span class="badge-dark">Deployment: Shadow / Canary</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Automated Retraining Strategies &amp; MLOps Lifecycle
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Designing resilient production pipelines: Scheduled retraining vs Drift-triggered pipelines, shadow deployment validation, and seamless zero-downtime model promotion.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m6" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Retraining Strategies Comparison -->
+<div class="card">
+  <div class="card-title">Continuous Retraining Strategies</div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th>Trigger Condition</th>
+          <th>Compute Cost</th>
+          <th>Best Applied To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Scheduled Retraining</strong></td>
+          <td>Calendar cadence (e.g. Monthly / End of Semester)</td>
+          <td>Predictable recurring cost</td>
+          <td>Seasonal student cohorts with stable curriculum standards</td>
+        </tr>
+        <tr>
+          <td><strong>Drift-Triggered Retraining</strong></td>
+          <td>Event-driven (PSI &gt; 0.25 on entrance exam distributions)</td>
+          <td>Pay-per-drift optimal compute</td>
+          <td>Sudden shifts in college admissions or grading criteria</td>
+        </tr>
+        <tr>
+          <td><strong>Performance-Triggered Retraining</strong></td>
+          <td>Ground-truth feedback (True Placement rate decays below 90%)</td>
+          <td>Requires delayed label ingestion</td>
+          <td>Post-placement season audit and recalibration</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Deployment Paradigms -->
+<div class="summary-grid">
+  <div class="card">
+    <div class="card-title">Shadow Deployment (Safe Verification)</div>
+    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+      Incoming production inference traffic is mirrored asynchronously to the newly retrained candidate model (v2.4).
+      Responses from candidate model are logged and compared for latency and divergence, but only champion model responses are returned to users.
+    </p>
+  </div>
+  <div class="card">
+    <div class="card-title">Canary Deployment (Progressive Rollout)</div>
+    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;">
+      Route 10% of real student traffic to the new model. If error rates remain &lt; 0.05% and latency percentiles are within SLA over 48 hours, traffic is sequentially promoted to 25%, 50%, and 100%.
+    </p>
+  </div>
+</div>
+{% endblock %}

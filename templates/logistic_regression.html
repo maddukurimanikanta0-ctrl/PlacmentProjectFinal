@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Logistic Regression &mdash; Placement Classification{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m2">Module 2: Supervised Linear Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Logistic Sigmoid &amp; Odds Ratios</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 2 &bull; CO2</span>
+        <span class="concept-badge">Logistic Regression</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700; margin: 0 0 0.4rem 0;">
+        Logistic Regression &mdash; Sigmoid, Decision Boundary &amp; Odds
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0; max-width: 900px;">
+        Binary classification using the logistic sigmoid \(\sigma(z) = \frac{1}{1 + e^{-z}}\), cross-entropy loss minimisation with Ridge (L2) regularisation, decision hyperplane, and odds ratios (\(e^\beta\)).
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m2" class="btn-back-dashboard">
+        &larr; Back to Module 2 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if error %}
+    <div class="alert alert-error">
+        <strong>Error:</strong> {{ error }}
+    </div>
+{% else %}
+
+<div class="summary-grid">
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Model Performance (Held-Out Test)</h3>
+        <ul style="line-height: 1.8;">
+            <li>Accuracy: <strong style="color: var(--accent-emerald);">{{ "%.2f"|format(metrics.accuracy * 100) }}%</strong></li>
+            <li>ROC-AUC: <strong style="color: var(--accent-cyan);">{{ metrics.roc_auc }}</strong></li>
+            <li>Precision: <strong>{{ metrics.precision }}</strong></li>
+            <li>Recall: <strong>{{ metrics.recall }}</strong></li>
+            <li>F1-Score: <strong>{{ metrics.f1 }}</strong></li>
+        </ul>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Confusion Matrix (10,000 Test Records)</h3>
+        <table class="mini-table">
+            <thead>
+              <tr><th>Actual / Predicted</th><th>Pred: Not Placed (0)</th><th>Pred: Placed (1)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Actual: Not Placed (0)</strong></td><td style="color: var(--accent-emerald);">TN: {{ metrics.confusion_matrix.tn }}</td><td style="color: var(--accent-rose);">FP: {{ metrics.confusion_matrix.fp }}</td></tr>
+              <tr><td><strong>Actual: Placed (1)</strong></td><td style="color: var(--accent-rose);">FN: {{ metrics.confusion_matrix.fn }}</td><td style="color: var(--accent-emerald);">TP: {{ metrics.confusion_matrix.tp }}</td></tr>
+            </tbody>
+        </table>
+        <p class="hint" style="margin-top: 0.75rem;">Total Test Samples: {{ metrics.test_samples }}</p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Top Placement Drivers (Odds Ratio)</h3>
+        <table class="mini-table">
+            <thead>
+              <tr><th>Feature</th><th>Weight (\(\beta\))</th><th>Odds Multiplier (\(e^\beta\))</th></tr>
+            </thead>
+            <tbody>
+              {% for item in metrics.top_positive %}
+              <tr>
+                <td><strong>{{ item.feature }}</strong></td>
+                <td style="color: var(--accent-cyan);">+{{ "%.2f"|format(item.coefficient) }}</td>
+                <td style="color: var(--accent-emerald); font-weight: 700;">{{ "%.2f"|format(item.odds_ratio or 2.718 ** item.coefficient) }}x</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Interactive Placement Probability Calculator (Logistic Model)</div>
+    <p class="card-subtitle">Test the direct logistic sigmoid probability output for candidate profile attributes:</p>
+
+    <form method="POST" action="{{ url_for('logistic_regression') }}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div>
+            <label for="CGPA">CGPA:</label>
+            <input type="number" step="0.01" min="0" max="10" name="CGPA" id="CGPA" value="{{ form_inputs.CGPA or 7.5 }}" required>
+        </div>
+        <div>
+            <label for="CodingTestScore">Coding Score:</label>
+            <input type="number" step="0.1" min="0" max="100" name="CodingTestScore" id="CodingTestScore" value="{{ form_inputs.CodingTestScore or 75 }}" required>
+        </div>
+        <div>
+            <label for="AptitudeTestScore">Aptitude Score:</label>
+            <input type="number" step="0.1" min="0" max="100" name="AptitudeTestScore" id="AptitudeTestScore" value="{{ form_inputs.AptitudeTestScore or 70 }}" required>
+        </div>
+        <div>
+            <label for="Internships">Internships:</label>
+            <input type="number" min="0" max="10" name="Internships" id="Internships" value="{{ form_inputs.Internships or 1 }}" required>
+        </div>
+        <div>
+            <label for="CollegeTier">College Tier:</label>
+            <select name="CollegeTier" id="CollegeTier">
+                <option value="Tier1" {% if form_inputs.CollegeTier == 'Tier1' %}selected{% endif %}>Tier 1</option>
+                <option value="Tier2" {% if not form_inputs.CollegeTier or form_inputs.CollegeTier == 'Tier2' %}selected{% endif %}>Tier 2</option>
+                <option value="Tier3" {% if form_inputs.CollegeTier == 'Tier3' %}selected{% endif %}>Tier 3</option>
+            </select>
+        </div>
+        <div>
+            <label for="HistoryOfBacklogs">Backlogs:</label>
+            <select name="HistoryOfBacklogs" id="HistoryOfBacklogs">
+                <option value="No" {% if not form_inputs.HistoryOfBacklogs or form_inputs.HistoryOfBacklogs == 'No' %}selected{% endif %}>No</option>
+                <option value="Yes" {% if form_inputs.HistoryOfBacklogs == 'Yes' %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+        <div style="display: flex; align-items: flex-end; grid-column: 1 / -1;">
+            <button type="submit" class="btn" style="padding: 0.65rem 1.75rem;">
+                Evaluate Placement Probability &rarr;
+            </button>
+        </div>
+    </form>
+
+    {% if pred_result %}
+    <div style="margin-top: 1.5rem; padding: 1.25rem; background: {% if pred_result.prediction == 1 %}var(--status-success-bg){% else %}var(--status-danger-bg){% endif %}; border: 1px solid {% if pred_result.prediction == 1 %}var(--status-success-border){% else %}var(--status-danger-border){% endif %}; border-radius: var(--radius-md);">
+        <h4 style="margin: 0 0 0.5rem 0; color: {% if pred_result.prediction == 1 %}var(--status-success-text){% else %}var(--status-danger-text){% endif %}; font-size: 1.05rem;">
+            Outcome: {{ pred_result.status }} ({{ pred_result.confidence }}% Confidence)
+        </h4>
+        <p style="margin: 0.25rem 0; font-size: 0.88rem; color: var(--text-secondary);">
+          Probability Placed: <strong style="color: var(--status-success-text);">{{ pred_result.probability_placed }}%</strong> | 
+          Probability Not Placed: <strong style="color: var(--status-danger-text);">{{ pred_result.probability_not_placed }}%</strong>
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="text-align: center; padding: 1.25rem;">
+  <a href="{{ url_for('index') }}#m2" class="btn">&larr; Return to Module 2 Dashboard</a>
+</div>
+
+{% endif %}
+{% endblock %}

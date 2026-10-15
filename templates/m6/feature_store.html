@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Feast Feature Store &amp; Online-Offline Pipeline - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m6">Module 6: ML Engineering</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Feast Feature Store Pipeline</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 6 &bull; CO6</span>
+        <span class="concept-badge">Feature Store Architecture</span>
+        <span class="badge-dark">Online Latency: {{ fs_data.retrieval_latency_ms }} ms</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Feast Feature Store — Online &amp; Offline Split
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Solving training-serving skew through centralized feature definitions: Parquet/BigQuery offline store for high-throughput batch training joins, and Redis in-memory online store for sub-millisecond real-time inference lookup.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m6" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Architecture KPI Grid -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Online Store</div>
+    <div class="kpi-val">{{ fs_data.online_store.split()[0] }}</div>
+    <div class="kpi-sub">Sub-millisecond Key-Value Store</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Offline Store</div>
+    <div class="kpi-val">{{ fs_data.offline_store.split()[0] }}</div>
+    <div class="kpi-sub">Point-in-Time Correct Joins</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Feature View TTL</div>
+    <div class="kpi-val">{{ fs_data.ttl_hours }} hrs</div>
+    <div class="kpi-sub">Temporal Freshness Window</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Online Lookup Latency</div>
+    <div class="kpi-val" style="color: #16a34a;">{{ fs_data.retrieval_latency_ms }} ms</div>
+    <div class="kpi-sub">Entity Key Retrieval</div>
+  </div>
+</div>
+
+<!-- Interactive Entity Feature Lookup Form -->
+<div class="card" style="margin-bottom: 1.5rem;">
+  <div class="card-title">Live Feature Store Lookup Simulator</div>
+  <p class="card-subtitle">Retrieve pre-computed student features from the online feature view:</p>
+  <form action="{{ url_for('m6.feature_store') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 160px;">
+      <label for="student_id">Entity Key (StudentID):
+        <input type="number" id="student_id" name="student_id" value="{{ fs_data.entity_id }}" min="1001" max="51000">
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Query Online Feature Store</button>
+    </div>
+  </form>
+
+  <div style="margin-top: 1.25rem;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Feature Name</th>
+            <th>Feature View</th>
+            <th>Type</th>
+            <th>Retrieved Online Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for feat, val in fs_data.features.items() %}
+          <tr>
+            <td><strong>{{ feat }}</strong></td>
+            <td><code>{{ fs_data.feature_view }}</code></td>
+            <td>float / int</td>
+            <td><strong>{{ val }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

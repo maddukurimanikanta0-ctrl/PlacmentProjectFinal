@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}ML Lifecycle &amp; Prediction Service - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m1">Module 1: ML Lifecycle</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Prediction Service &amp; Request Tracing</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 1 &bull; CO1</span>
+        <span class="concept-badge">End-to-End Tracing</span>
+        <span class="badge-dark badge-status-online"><span class="status-dot"></span> Live Prediction Endpoint</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        PlacementPredict as a System — Request Tracing &amp; Lifecycle
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Tracing one prediction end-to-end: HTTP Request &rarr; Schema Validation &rarr; Feature Transformation &rarr; Model Inference &rarr; Response Delivery with zero training-serving skew.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m1" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Lifecycle Architecture Flow -->
+<div class="card">
+  <div class="card-title">Production ML Lifecycle Flow</div>
+  <p class="card-subtitle">Where each lifecycle stage lives in the codebase:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Lifecycle Role</th>
+          <th>Implementation File</th>
+          <th>Serving Boundary Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">1</span> <strong>Raw Ingestion</strong></td>
+          <td>Raw 50k student records</td>
+          <td><code>ml/data_loader.py</code></td>
+          <td>Offline batch loading</td>
+        </tr>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">2</span> <strong>Data Hygiene</strong></td>
+          <td>De-duplication &amp; null checks</td>
+          <td><code>ml/data_loader.py:clean_data</code></td>
+          <td>Offline data verification</td>
+        </tr>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">3</span> <strong>Feature Pipeline</strong></td>
+          <td>StandardScaler &amp; SimpleImputer</td>
+          <td><code>ml/preprocessing.py</code></td>
+          <td>Shared artifact (zero skew)</td>
+        </tr>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">4</span> <strong>Training &amp; Eval</strong></td>
+          <td>Gradient Boosting &amp; metrics</td>
+          <td><code>ml/train.py</code></td>
+          <td>Offline pipeline</td>
+        </tr>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">5</span> <strong>Packaging</strong></td>
+          <td>Joblib / ONNX serialization</td>
+          <td><code>models/model.joblib</code></td>
+          <td>Versioned artifact registry</td>
+        </tr>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">6</span> <strong>Live Serving</strong></td>
+          <td>HTTP REST /predict endpoint</td>
+          <td><code>routes/m1_routes.py</code></td>
+          <td>Online sub-5ms inference</td>
+        </tr>
+        <tr>
+          <td><span class="stage-num" style="display:inline-flex;">7</span> <strong>Drift Monitoring</strong></td>
+          <td>Population Stability Index (PSI)</td>
+          <td><code>ml/ml_engineering.py</code></td>
+          <td>Online telemetry &amp; retraining loop</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Embed Prediction Engine -->
+{% include "partials/prediction_engine.html" %}
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}PCA &amp; Dimensionality Reduction - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m4">Module 4: Unsupervised</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">PCA &amp; Manifold Dimensionality</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="concept-badge">Linear Projection</span>
+        <span class="badge-dark">2D Cumulative Variance: 71.38%</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Principal Component Analysis (PCA) &amp; Manifold Embeddings
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Standardized linear dimensionality reduction via covariance eigendecomposition, compressing 10 academic and skill features into 2 orthogonal principal axes.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m4" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- PCA Chart & Variance Grid -->
+<div class="summary-grid">
+  <div class="card">
+    <div class="card-title">2D PCA Cluster Projection</div>
+    <p class="card-subtitle">Projected coordinates of 50,000 students along PC1 and PC2:</p>
+    <div style="text-align: center;">
+      <img src="{{ url_for('static', filename='charts/pca_clusters.png') }}" alt="PCA Clusters" style="max-width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Explained Variance Ratio</div>
+    <p class="card-subtitle">Percentage of total cohort variance captured per principal axis:</p>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Principal Component</th>
+            <th>Individual Variance</th>
+            <th>Cumulative Variance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for var in pca_data.variance_per_component %}
+          <tr>
+            <td><strong>PC{{ loop.index }}</strong></td>
+            <td><strong>{{ var }}%</strong></td>
+            <td>{{ pca_data.cumulative_variance[loop.index0] }}%</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 1rem; padding: 0.85rem; background: var(--light-subtle); border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary);">
+      <strong>Pitfall Warning</strong>: Applying PCA without prior <code>StandardScaler</code> standardization allows features with large numerical ranges (e.g. Coding Score 0-100) to artificially dominate PC1 over bounded metrics (e.g. CGPA 0-10 or Soft Skills 0-5).
+    </div>
+  </div>
+</div>
+{% endblock %}

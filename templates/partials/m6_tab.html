@@ -1,0 +1,88 @@
+<!-- Module 6 View Container -->
+<div class="module-view-container" id="module-view-m6">
+  <div class="module-header-banner">
+    <div class="module-header-info">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; align-items: center;">
+        <span class="module-badge">Module 6 &bull; CO6</span>
+        <span class="concept-badge">ML Engineering &amp; Production</span>
+      </div>
+      <h2>ML Engineering — From Notebook to Production</h2>
+      <p>Closing the notebook-to-production gap: Feast feature stores, training-serving skew detection, ONNX packaging, telemetry, and PSI drift monitoring.</p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('m6.monitoring') }}" class="btn btn-primary">&rarr; Drift &amp; Telemetry Dashboard</a>
+    </div>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Feature Store</span>
+        <h3 class="concept-title">Feature Store &amp; Online-Offline Pipeline</h3>
+        <p class="concept-summary">Feast feature store conceptual architecture: batch offline store for training vs sub-millisecond Redis online store for serving.</p>
+        <ul class="concept-bullets">
+          <li>Point-in-time correctness for temporal features</li>
+          <li>Eliminating duplicate feature engineering code</li>
+          <li>Sub-millisecond entity key feature retrieval</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m6.feature_store') }}" class="concept-action-btn">Explore Feature Store &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Packaging</span>
+        <h3 class="concept-title">Model Packaging &amp; ONNX Runtime</h3>
+        <p class="concept-summary">Portable serialization: Moving from pickle pitfalls to ONNX runtime, containerized Docker artifacts, and formal Model Cards.</p>
+        <ul class="concept-bullets">
+          <li>Standardized input/output tensor signature</li>
+          <li>Cross-platform inference (Python, Go, C++, Browser)</li>
+          <li>Official Model Card documenting limits &amp; fairness</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m6.packaging') }}" class="concept-action-btn">Inspect Model Packaging &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Serving</span>
+        <h3 class="concept-title">High-Throughput Serving &amp; Telemetry</h3>
+        <p class="concept-summary">FastAPI vs Flask serving architectures: asynchronous endpoints, p50/p95/p99 latency percentiles, and batch throughput.</p>
+        <ul class="concept-bullets">
+          <li>Live endpoint testing: /predict, /health, /metrics</li>
+          <li>Pydantic request validation &amp; OpenAPI auto-docs</li>
+          <li>Real-time telemetry and error rate monitoring</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m6.serving') }}" class="concept-action-btn">Explore Serving Architecture &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Production Monitoring</span>
+        <h3 class="concept-title">Data Drift &amp; Population Stability (PSI)</h3>
+        <p class="concept-summary">Real-time drift detection comparing production feature distributions with baseline training distributions using PSI.</p>
+        <ul class="concept-bullets">
+          <li>Population Stability Index: PSI &lt; 0.1 stable, &gt; 0.25 critical</li>
+          <li>Covariate shift simulation playground</li>
+          <li>Automated alert generation for upstream changes</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m6.monitoring') }}" class="concept-action-btn">Launch Drift Monitor &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">MLOps Lifecycle</span>
+        <h3 class="concept-title">Automated Retraining Strategies</h3>
+        <p class="concept-summary">Scheduled vs drift-triggered automated retraining pipelines, shadow deployments, and canary releases in production.</p>
+        <ul class="concept-bullets">
+          <li>Trigger criteria: calendar cron vs PSI threshold violation</li>
+          <li>Shadow deployment evaluating candidate vs champion</li>
+          <li>MLflow experiment logging and DVC data versioning</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m6.retraining') }}" class="concept-action-btn">Explore Retraining Pipeline &rarr;</a>
+    </div>
+  </div>
+</div>

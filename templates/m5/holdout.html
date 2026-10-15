@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}3-Way Train/Val/Test Split Discipline - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m5">Module 5: Evaluation</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">3-Way Split Discipline</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 5 &bull; CO5</span>
+        <span class="concept-badge">Split Discipline</span>
+        <span class="badge-dark">Leakage Prevention Verified</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Train / Validation / Test 3-Way Split Discipline
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Strict three-way split discipline: Train (70%) for model fitting, Validation (15%) for hyperparameter selection, and Test (15%) held out completely untouched until final verification.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m5" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Splits Summary KPI Grid -->
+<div class="kpi-grid">
+  {% for name, sinfo in split_data.splits.items() %}
+  <div class="kpi-card">
+    <div class="kpi-title">{{ name|title }} Partition</div>
+    <div class="kpi-val">{{ sinfo.percentage }}% <small style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);">({{ "{:,}".format(sinfo.count) }} records)</small></div>
+    <div class="kpi-sub">Accuracy: <strong style="color: #16a34a;">{{ (sinfo.acc * 100)|round(2) }}%</strong></div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Leakage Prevention Analysis -->
+<div class="card">
+  <div class="card-title">Data Leakage Prevention Audit</div>
+  <p class="card-subtitle">{{ split_data.leakage_discipline }}</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pipeline Component</th>
+          <th>Fitting Location</th>
+          <th>Transformation Target</th>
+          <th>Leakage Risk Prevented</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>StandardScaler</strong></td>
+          <td><code>Train Split Only</code></td>
+          <td>Train, Val &amp; Test</td>
+          <td>Mean &amp; variance of test set remains completely unseen</td>
+        </tr>
+        <tr>
+          <td><strong>SimpleImputer (Median)</strong></td>
+          <td><code>Train Split Only</code></td>
+          <td>Train, Val &amp; Test</td>
+          <td>Median imputed test values computed strictly from train</td>
+        </tr>
+        <tr>
+          <td><strong>OneHotEncoder</strong></td>
+          <td><code>Train Split Only</code></td>
+          <td>Train, Val &amp; Test</td>
+          <td>Handles unseen category levels safely via handle_unknown</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

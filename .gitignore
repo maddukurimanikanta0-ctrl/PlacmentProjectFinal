@@ -1,0 +1,31 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# PyCharm
+.idea/
+
+# Flask
+instance/
+.webassets-cache
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated artifacts
+static/charts/*.png
+!static/charts/.gitkeep
+models/*.pkl
+!models/.gitkeep
+
+# Env vars
+.env

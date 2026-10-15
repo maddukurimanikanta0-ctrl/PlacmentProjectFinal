@@ -1,0 +1,74 @@
+{
+  "features": [
+    "CGPA",
+    "AttendancePercent",
+    "Internships",
+    "Projects",
+    "Workshops",
+    "Certifications",
+    "AptitudeTestScore",
+    "CodingTestScore",
+    "SoftSkillsRating",
+    "MockInterviewScore"
+  ],
+  "n_clusters": 4,
+  "pca_variance_ratio": [
+    0.651,
+    0.0628
+  ],
+  "pca_total_variance": 71.38,
+  "clusters": {
+    "0": {
+      "name": "Balanced Regular Performers",
+      "size": 17673,
+      "percentage": 35.3,
+      "placement_rate": 98.81,
+      "avg_cgpa": 8.58,
+      "avg_coding": 77.44,
+      "avg_aptitude": 81.64,
+      "color": "#3b82f6"
+    },
+    "1": {
+      "name": "High Technical Specialists",
+      "size": 683,
+      "percentage": 1.4,
+      "placement_rate": 82.28,
+      "avg_cgpa": 4.25,
+      "avg_coding": 8.85,
+      "avg_aptitude": 36.76,
+      "color": "#10b981"
+    },
+    "2": {
+      "name": "Foundational / Skill-Building Cohort",
+      "size": 21870,
+      "percentage": 43.7,
+      "placement_rate": 67.54,
+      "avg_cgpa": 7.06,
+      "avg_coding": 55.36,
+      "avg_aptitude": 68.32,
+      "color": "#f59e0b"
+    },
+    "3": {
+      "name": "Elite Placements / All-Rounders",
+      "size": 9774,
+      "percentage": 19.5,
+      "placement_rate": 0.61,
+      "avg_cgpa": 5.45,
+      "avg_coding": 29.27,
+      "avg_aptitude": 49.63,
+      "color": "#8b5cf6"
+    }
+  },
+  "elbow_inertias": {
+    "2": 268420.0,
+    "3": 215400.0,
+    "4": 172900.0,
+    "5": 149300.0,
+    "6": 133200.0
+  },
+  "silhouette_scores": {
+    "3": 0.28,
+    "4": 0.34,
+    "5": 0.31
+  }
+}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Linear Regression &mdash; Salary Prediction{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m2">Module 2: Supervised Linear Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Linear Regression &amp; Salary Estimation</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 2 &bull; CO2</span>
+        <span class="concept-badge">Linear Regression</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700; margin: 0 0 0.4rem 0;">
+        Linear Regression &mdash; Salary Package Estimator
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0; max-width: 900px;">
+        Closed-form normal equations vs Gradient Descent training for estimating starting salary (LPA) from student academic standing and assessment scores.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m2" class="btn-back-dashboard">
+        &larr; Back to Module 2 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if error %}
+    <div class="alert alert-error">
+        <strong>Error:</strong> {{ error }}
+    </div>
+{% else %}
+
+<div class="summary-grid">
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Simple Linear Regression (CGPA &rarr; Salary)</h3>
+        <ul style="line-height: 1.8;">
+            <li>Slope (\(\beta_1\)): <strong style="color: var(--accent-cyan);">{{ simple.slope }}</strong></li>
+            <li>Intercept (\(\beta_0\)): <strong>{{ simple.intercept }}</strong></li>
+            <li>R&sup2; Score: <strong style="color: var(--accent-emerald);">{{ simple.r2_score }}</strong></li>
+            <li>Mean Squared Error (MSE): <strong>{{ simple.mse }}</strong></li>
+        </ul>
+        <p class="hint" style="margin-top: 0.75rem;">Model Equation: \(\text{Salary} = {{ simple.intercept }} + {{ simple.slope }} \times \text{CGPA}\)</p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Multiple Linear Regression (OLS)</h3>
+        <ul style="line-height: 1.8;">
+            <li>R&sup2; Score: <strong style="color: var(--accent-emerald);">{{ multi.r2_score }}</strong></li>
+            <li>Mean Absolute Error (MAE): <strong style="color: var(--accent-cyan);">{{ multi.mae }} LPA</strong></li>
+            <li>Mean Squared Error (MSE): <strong>{{ multi.mse }}</strong></li>
+            <li>Evaluated Placed Samples: <strong>{{ multi.train_samples }} Train / {{ multi.test_samples }} Test</strong></li>
+        </ul>
+        <p class="hint" style="margin-top: 0.75rem;">Evaluated on the placed candidate subset of the 50,000 dataset records.</p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Fitted Regression Coefficients</h3>
+        <table class="mini-table">
+            <thead>
+              <tr><th>Predictor Feature</th><th>Weight (\(\beta\))</th></tr>
+            </thead>
+            <tbody>
+              {% for feat, coef in multi.coefficients.items() %}
+              <tr><td><strong>{{ feat }}</strong></td><td style="color: var(--accent-cyan);">+{{ coef }}</td></tr>
+              {% endfor %}
+              <tr><td><em>Intercept (\(\beta_0\))</em></td><td><em>{{ multi.intercept }}</em></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">Interactive Salary Package Calculator</div>
+    <p class="card-subtitle">Estimate starting placement package using the multiple linear regression model weights:</p>
+    
+    <form method="POST" action="{{ url_for('linear_regression') }}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div>
+            <label for="cgpa">CGPA (0 - 10):</label>
+            <input type="number" step="0.01" min="0" max="10" name="cgpa" id="cgpa" value="{{ test_input.cgpa }}" required>
+        </div>
+        <div>
+            <label for="coding">Coding Score (0 - 100):</label>
+            <input type="number" step="0.1" min="0" max="100" name="coding" id="coding" value="{{ test_input.coding }}" required>
+        </div>
+        <div>
+            <label for="aptitude">Aptitude Score (0 - 100):</label>
+            <input type="number" step="0.1" min="0" max="100" name="aptitude" id="aptitude" value="{{ test_input.aptitude }}" required>
+        </div>
+        <div style="display: flex; align-items: flex-end;">
+            <button type="submit" class="btn" style="width: 100%; height: 42px;">
+                Calculate Salary &rarr;
+            </button>
+        </div>
+    </form>
+
+    {% if predicted_salary is not none %}
+    <div style="margin-top: 1.5rem; padding: 1.25rem; background: var(--status-success-bg); border: 1px solid var(--status-success-border); border-radius: var(--radius-md); text-align: center;">
+        <h4 style="margin: 0 0 0.4rem 0; color: var(--status-success-text); font-size: 0.95rem;">Estimated Package:</h4>
+        <p style="font-size: 2rem; font-weight: 700; margin: 0; color: var(--text-primary);">Rs. {{ predicted_salary }} LPA</p>
+        <small style="color: var(--text-muted);">Estimated from CGPA {{ test_input.cgpa }}, Coding {{ test_input.coding }}, Aptitude {{ test_input.aptitude }}</small>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="text-align: center; padding: 1.25rem;">
+  <a href="{{ url_for('index') }}#m2" class="btn">&larr; Return to Module 2 Dashboard</a>
+</div>
+
+{% endif %}
+{% endblock %}

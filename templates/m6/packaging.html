@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Model Packaging &amp; ONNX Runtime - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m6">Module 6: ML Engineering</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Packaging &amp; ONNX Registry</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 6 &bull; CO6</span>
+        <span class="concept-badge">Packaging &amp; Governance</span>
+        <span class="badge-dark">Model Version: {{ card_data.version }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Model Packaging, Serialization &amp; ONNX Runtime
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Closing the notebook-to-production gap: Eliminating pickle security pitfalls through ONNX (Open Neural Network Exchange), containerized serving, and formal Model Cards.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m6" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Packaging Formats Table -->
+<div class="card">
+  <div class="card-title">Supported Serialization Formats in Model Registry</div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Format</th>
+          <th>Size</th>
+          <th>Target Runtime</th>
+          <th>Pros / Cons</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fmt in card_data.serialization_formats %}
+        <tr>
+          <td><strong>{{ fmt.format }}</strong></td>
+          <td>{{ fmt.size_kb }} KB</td>
+          <td><code>{{ fmt.target }}</code></td>
+          <td>
+            {% if 'Joblib' in fmt.format %}
+              Fast Python loading; fragile across Python/sklearn version upgrades.
+            {% elif 'ONNX' in fmt.format %}
+              <span class="badge-dark" style="background:#dcfce7; color:#166534; border-color:#bbf7d0;">Cross-Platform Standard</span> Invariant to Python version; C++ runtime acceleration.
+            {% else %}
+              Standard MLOps experiment tracking and automated lineage.
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Model Card Component -->
+<div class="card">
+  <div class="card-title">Production Model Card (PlacementPredict v{{ card_data.version }})</div>
+  <p class="card-subtitle">Official governance artifact documenting training metadata, performance bounds, and ethical constraints:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <tbody>
+        <tr><td><strong>Model Architecture</strong></td><td>{{ card_data.framework }}</td></tr>
+        <tr><td><strong>Training Dataset</strong></td><td>{{ card_data.training_metadata.dataset_rows }} Verified Student Records (32 features)</td></tr>
+        <tr><td><strong>Production Metrics</strong></td><td>{{ card_data.training_metadata.primary_metric }} | Accuracy: {{ card_data.training_metadata.accuracy }}</td></tr>
+        <tr><td><strong>Intended Use</strong></td><td>{{ card_data.training_metadata.intended_use }}</td></tr>
+        <tr><td><strong>Ethical Safeguards</strong></td><td>{{ card_data.ethical_considerations }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

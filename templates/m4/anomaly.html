@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Anomaly Detection &amp; Isolation Forest - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m4">Module 4: Unsupervised</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Anomaly Detection</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="concept-badge">Isolation Forest</span>
+        <span class="badge-dark">Contamination Rate: 3%</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Anomaly Detection &amp; Student Outlier Profiling
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Isolating contradictory or anomalous student profiles (e.g., high CGPA with zero attendance or very low test scores) using random recursive partitioning trees.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m4" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Key Anomaly Indicators -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Contamination Target</div>
+    <div class="kpi-val">{{ (ano_data.contamination_rate * 100)|round(1) }}%</div>
+    <div class="kpi-sub">Expected Cohort Anomaly Prior</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Anomalies Detected</div>
+    <div class="kpi-val" style="color: #dc2626;">{{ ano_data.total_anomalies_detected }}</div>
+    <div class="kpi-sub">Flagged Academic Outlier Records</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Isolation Forest Principle</div>
+    <div class="kpi-val">Short Paths</div>
+    <div class="kpi-sub">Anomalies Isolate Near Root</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Downstream Role</div>
+    <div class="kpi-val">Feature Input</div>
+    <div class="kpi-sub">Improves Supervised AUC</div>
+  </div>
+</div>
+
+<!-- Sample Detected Anomalies -->
+<div class="card">
+  <div class="card-title">Sample Flagged Academic Anomalies</div>
+  <p class="card-subtitle">These profiles demonstrate conflicting traits identified by the isolation trees:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>CGPA</th>
+          <th>Coding Score</th>
+          <th>Attendance</th>
+          <th>Internships</th>
+          <th>Anomaly Score</th>
+          <th>Outcome</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in ano_data.sample_anomalies %}
+        <tr>
+          <td>#{{ s.student_id }}</td>
+          <td><strong>{{ s.cgpa }}</strong></td>
+          <td>{{ s.coding }}</td>
+          <td>{{ s.attendance }}%</td>
+          <td>{{ s.internships }}</td>
+          <td><code style="color: #dc2626;">{{ s.anomaly_score }}</code></td>
+          <td>
+            <span class="badge-dark" style="background:#fee2e2; color:#991b1b; border-color:#fecaca;">{{ s.status }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

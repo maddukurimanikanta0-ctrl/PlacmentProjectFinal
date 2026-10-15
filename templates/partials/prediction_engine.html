@@ -1,0 +1,117 @@
+<!-- Live Prediction Engine Section -->
+<section class="card" id="prediction-engine" style="border-left: 4px solid var(--dark-neutral); margin-top: 2rem;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem;">
+        <span class="module-badge">Module 1 Live Core</span>
+        <span class="badge-dark badge-status-online"><span class="status-dot"></span> Serving Model Active</span>
+      </div>
+      <h2 style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary); margin: 0 0 0.25rem 0;">
+        Candidate Placement Prediction Engine
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+        Submit candidate profile to run complete inference pipeline with zero training-serving skew.
+      </p>
+    </div>
+  </div>
+
+  <!-- Presets -->
+  <div class="presets-banner no-print">
+    <span class="presets-label">Quick Test Presets:</span>
+    <button type="button" class="btn-preset" onclick="loadSafeProfile()">&#9654; High Profile (Safe)</button>
+    <button type="button" class="btn-preset" onclick="loadDefaultProfile()">&#9654; Moderate Profile</button>
+    <button type="button" class="btn-preset" onclick="loadRiskProfile()">&#9654; At-Risk Profile</button>
+  </div>
+
+  <form action="{{ url_for('m1.predict') }}" method="POST">
+    <div class="grid">
+      <div>
+        <label for="CGPA">CGPA (0 - 10)
+          <input type="number" step="0.01" min="0" max="10" name="CGPA" id="CGPA" value="8.0" required>
+        </label>
+      </div>
+      <div>
+        <label for="AttendancePercent">Attendance (%)
+          <input type="number" step="1" min="0" max="100" name="AttendancePercent" id="AttendancePercent" value="85" required>
+        </label>
+      </div>
+      <div>
+        <label for="Internships">Internships Completed
+          <input type="number" min="0" max="10" name="Internships" id="Internships" value="1" required>
+        </label>
+      </div>
+      <div>
+        <label for="Projects">Projects Completed
+          <input type="number" min="0" max="10" name="Projects" id="Projects" value="2" required>
+        </label>
+      </div>
+      <div>
+        <label for="Workshops">Workshops Attended
+          <input type="number" min="0" max="10" name="Workshops" id="Workshops" value="2" required>
+        </label>
+      </div>
+      <div>
+        <label for="Certifications">Certifications Earned
+          <input type="number" min="0" max="10" name="Certifications" id="Certifications" value="2" required>
+        </label>
+      </div>
+      <div>
+        <label for="AptitudeTestScore">Aptitude Test Score (0 - 100)
+          <input type="number" step="0.5" min="0" max="100" name="AptitudeTestScore" id="AptitudeTestScore" value="75" required>
+        </label>
+      </div>
+      <div>
+        <label for="CodingTestScore">Coding Assessment Score (0 - 100)
+          <input type="number" step="0.5" min="0" max="100" name="CodingTestScore" id="CodingTestScore" value="78" required>
+        </label>
+      </div>
+      <div>
+        <label for="SoftSkillsRating">Soft Skills Rating (0 - 5)
+          <input type="number" step="0.1" min="0" max="5" name="SoftSkillsRating" id="SoftSkillsRating" value="4.0" required>
+        </label>
+      </div>
+      <div>
+        <label for="MockInterviewScore">Mock Interview Score (0 - 100)
+          <input type="number" step="0.5" min="0" max="100" name="MockInterviewScore" id="MockInterviewScore" value="75" required>
+        </label>
+      </div>
+      <div>
+        <label for="CollegeTier">College Tier
+          <select name="CollegeTier" id="CollegeTier">
+            <option value="Tier1">Tier 1 (Premier)</option>
+            <option value="Tier2" selected>Tier 2 (Regional)</option>
+            <option value="Tier3">Tier 3 (Affiliated)</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label for="Stream">Academic Stream
+          <select name="Stream" id="Stream">
+            <option value="CS" selected>Computer Science (CS)</option>
+            <option value="IT">Information Tech (IT)</option>
+            <option value="ECE">Electronics (ECE)</option>
+            <option value="Mechanical">Mechanical</option>
+            <option value="Civil">Civil</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label for="HistoryOfBacklogs">History of Backlogs
+          <select name="HistoryOfBacklogs" id="HistoryOfBacklogs">
+            <option value="No" selected>No (Clean Record)</option>
+            <option value="Yes">Yes (Arrears Present)</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+      <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 0.92rem; font-weight: 600;">
+        Run Real-Time Placement Inference &rarr;
+      </button>
+      <span style="font-size: 0.8rem; color: var(--text-muted);">
+        Pipeline executes live inference + salary linear regressor + K-Means cluster archetype assignment.
+      </span>
+    </div>
+  </form>
+</section>

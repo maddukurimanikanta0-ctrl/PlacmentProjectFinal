@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Feature Importance &amp; SHAP Attribution - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m3">Module 3: Tree Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Feature Importance &amp; SHAP</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 3 &bull; CO3</span>
+        <span class="concept-badge">Interpretability &amp; Attribution</span>
+        <span class="badge-dark">Top Driver: {{ perm_data.rankings[0].feature }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Feature Importance: Gini (MDI), Permutation &amp; SHAP
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Comparing in-sample Mean Decrease in Impurity (Gini Importance) against held-out Permutation Importance and Shapley Additive exPlanations (SHAP).
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m3" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Feature Importance Table -->
+<div class="card">
+  <div class="card-title">Permutation vs Gini Importance Rankings</div>
+  <p class="card-subtitle">Permutation importance scrambles each feature on held-out test data and records the drop in performance:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Feature</th>
+          <th>Permutation Score Drop (&Delta;)</th>
+          <th>Permutation Std (&sigma;)</th>
+          <th>Gini Importance (MDI)</th>
+          <th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in perm_data.rankings %}
+        <tr>
+          <td><strong>#{{ loop.index }}</strong></td>
+          <td><strong>{{ item.feature }}</strong></td>
+          <td><strong style="color: #15803d;">+{{ item.perm_mean }}</strong></td>
+          <td>&plusmn;{{ item.perm_std }}</td>
+          <td>{{ item.gini_importance }}</td>
+          <td>
+            {% if loop.index <= 2 %}
+              <span class="badge-dark" style="background:#dcfce7; color:#166534; border-color:#bbf7d0;">Primary Determinant</span>
+            {% elif loop.index <= 4 %}
+              <span class="badge-dark" style="background:#f0f9ff; color:#0369a1; border-color:#bae6fd;">Strong Contributor</span>
+            {% else %}
+              <span class="badge-dark">Secondary Influence</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SHAP Preview Box -->
+<div class="card">
+  <div class="card-title">SHAP (Shapley Additive exPlanations) Preview</div>
+  <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+    Unlike heuristic feature importance scores, <strong>SHAP</strong> values are rooted in cooperative game theory and guarantee local accuracy:
+    <br><br>
+    <code style="background: var(--light-subtle); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.95rem; display: inline-block;">
+      f(x) = E[f(x)] + &sum; &phi;<sub>i</sub>(x)
+    </code>
+    <br><br>
+    Every prediction is decomposed into the base expected placement rate plus individual feature attribution weights (&phi;<sub>i</sub>), explaining exactly why a given student was predicted Placed or Not Placed!
+  </p>
+</div>
+{% endblock %}

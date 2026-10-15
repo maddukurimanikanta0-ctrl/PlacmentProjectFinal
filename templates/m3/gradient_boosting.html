@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Gradient Boosting &amp; Industrial Workhorses - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m3">Module 3: Tree Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Gradient Boosting (GBDT / LightGBM)</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 3 &bull; CO3</span>
+        <span class="concept-badge">Functional Gradient Descent</span>
+        <span class="badge-dark badge-status-online"><span class="status-dot"></span> Production Champion Model</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Gradient Boosting, XGBoost &amp; LightGBM Ensembles
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Functional gradient descent sequentially minimizing loss by fitting weak decision trees to negative gradient pseudo-residuals. The dominant architecture in tabular machine learning.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m3" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Comparison Matrix -->
+<div class="kpi-grid">
+  {% for key, info in boost_data.items() %}
+  {% if key != 'tabular_superiority_rationale' %}
+  <div class="kpi-card">
+    <div class="kpi-title">{{ info.name }}</div>
+    <div class="kpi-val" style="color: #16a34a;">{{ (info.accuracy * 100)|round(2) }}%</div>
+    <div class="kpi-sub">ROC-AUC: <strong>{{ info.roc_auc }}</strong> &bull; {{ info.approach }}</div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+<!-- Tabular Superiority Explanation -->
+<div class="card">
+  <div class="card-title">Why Trees Beat Neural Networks on Tabular Data (The Kaggle Reality)</div>
+  <p class="card-subtitle">{{ boost_data.tabular_superiority_rationale }}</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Engineering Dimension</th>
+          <th>Gradient Boosted Trees (XGBoost / LightGBM)</th>
+          <th>Deep Neural Networks (MLP / Transformers)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Scale Sensitivity</strong></td>
+          <td>Invariant to monotonic feature scaling (no normalization required)</td>
+          <td>Extremely sensitive; requires rigorous z-score scaling</td>
+        </tr>
+        <tr>
+          <td><strong>Missing Values</strong></td>
+          <td>Built-in optimal default split directions</td>
+          <td>Requires explicit imputation or missingness masks</td>
+        </tr>
+        <tr>
+          <td><strong>Irrelevant Features</strong></td>
+          <td>Zero split gain automatically ignores noise attributes</td>
+          <td>Prone to assigning weights to noise without strong regularizers</td>
+        </tr>
+        <tr>
+          <td><strong>Compute Budget</strong></td>
+          <td>Trains in seconds on CPU via histogram binning</td>
+          <td>Requires GPU acceleration and complex hyperparameter tuning</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

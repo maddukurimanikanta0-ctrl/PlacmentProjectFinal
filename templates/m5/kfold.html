@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Stratified K-Fold Cross Validation - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m5">Module 5: Evaluation</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Stratified K-Fold CV</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 5 &bull; CO5</span>
+        <span class="concept-badge">Stratified K-Fold</span>
+        <span class="badge-dark">Mean Accuracy: {{ ((kfold.mean_accuracy or 0.0) * 100)|round(2) }}%</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Stratified K-Fold &amp; Nested Cross-Validation
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Rigorous out-of-fold model validation partitioning student records into K folds while strictly preserving target class ratios (67.6% placed) across every iteration.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m5" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Render K-Fold Section Partial -->
+{% include "partials/kfold_section.html" %}
+
+<div class="card" style="margin-top: 1.5rem;">
+  <div class="card-title">Nested Cross-Validation for Unbiased Evaluation</div>
+  <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+    When tuning hyperparameters (e.g. tree depth or regularization &alpha;), evaluating on the same cross-validation loop introduces optimistically biased estimates.
+    <br><br>
+    <strong>Nested CV Architecture</strong>:
+    <br>
+    &bull; <em>Inner Loop (K=3)</em>: Selects optimal hyperparameters across validation folds.<br>
+    &bull; <em>Outer Loop (K=5)</em>: Evaluates the model with chosen hyperparameters on completely unseen outer test folds, ensuring truly unbiased generalization estimation.
+  </p>
+</div>
+{% endblock %}

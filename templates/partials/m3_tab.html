@@ -1,0 +1,74 @@
+<!-- Module 3 View Container -->
+<div class="module-view-container" id="module-view-m3">
+  <div class="module-header-banner">
+    <div class="module-header-info">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; align-items: center;">
+        <span class="module-badge">Module 3 &bull; CO3</span>
+        <span class="concept-badge">Tree-Based Ensembles</span>
+      </div>
+      <h2>Supervised Learning — Tree-Based Models &amp; Ensembles</h2>
+      <p>CART greedy trees, cost-complexity pruning, bagging variance reduction, functional gradient descent, and tabular data superiority.</p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('m3.tree_models') }}" class="btn btn-primary">&rarr; Tree Benchmark Suite</a>
+    </div>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Recursive Partitioning</span>
+        <h3 class="concept-title">Decision Trees &amp; Cost-Complexity Pruning</h3>
+        <p class="concept-summary">Top-down greedy recursive splitting using Gini Impurity and entropy, with post-pruning via effective cost-complexity alpha.</p>
+        <ul class="concept-bullets">
+          <li>Gini splitting criterion: 1 - &sum; p<sub>i</sub><sup>2</sup></li>
+          <li>Stopping criteria: max_depth, min_samples_split</li>
+          <li>Pruning path diagnosing the bias-variance tradeoff</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m3.decision_tree') }}" class="concept-action-btn">Explore Decision Tree &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Bagging Ensemble</span>
+        <h3 class="concept-title">Random Forests &amp; Out-of-Bag (OOB) Error</h3>
+        <p class="concept-summary">Bootstrap aggregation with random feature subspace sampling, cutting variance while preserving low tree bias.</p>
+        <ul class="concept-bullets">
+          <li>Decorrelating B decision trees via feature subsampling &radic;p</li>
+          <li>OOB validation error computed without separate validation set</li>
+          <li>High robustness against tabular overfitting</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m3.random_forest') }}" class="concept-action-btn">Explore Random Forest &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Boosting Workhorses</span>
+        <h3 class="concept-title">Gradient Boosting, XGBoost &amp; LightGBM</h3>
+        <p class="concept-summary">Sequential residual fitting via functional gradient descent. The industrial workhorses dominating structured tabular datasets.</p>
+        <ul class="concept-bullets">
+          <li>Fitting shallow trees to pseudo-residuals</li>
+          <li>Histogram-based splitting &amp; leaf-wise growth</li>
+          <li>Production deployment achieving 97.96% ROC-AUC</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m3.gradient_boosting') }}" class="concept-action-btn">Compare Boosting Models &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Model Explainability</span>
+        <h3 class="concept-title">Feature Importance &amp; SHAP Values</h3>
+        <p class="concept-summary">Interpreting tree decisions through Mean Decrease in Impurity (Gini), permutation feature importance, and SHAP attribution.</p>
+        <ul class="concept-bullets">
+          <li>Coding Score &amp; CGPA emerge as top placement drivers</li>
+          <li>Permutation importance eliminates cardinality bias</li>
+          <li>SHAP local additive explanations preview</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m3.feature_importance') }}" class="concept-action-btn">Inspect Feature Importance &rarr;</a>
+    </div>
+  </div>
+</div>

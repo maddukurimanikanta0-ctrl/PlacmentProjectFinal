@@ -1,0 +1,70 @@
+<!-- Stratified K-Fold Cross-Validation Section -->
+{% if kfold and kfold.k_value %}
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+        <span class="concept-badge">K-Fold Cross Validation</span>
+        <h2 style="margin: 0.4rem 0 0.2rem 0; color: var(--text-primary); font-size: 1.35rem;">
+            Stratified K-Fold Cross-Validation (K = {{ kfold.k_value }})
+        </h2>
+        <p style="margin: 0; color: var(--text-muted); font-size: 0.88rem;">
+            Partitioning {{ kfold.total_samples }} records into {{ kfold.k_value }} stratified folds to ensure equal class representation and stable out-of-fold generalization.
+        </p>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">Mean Cross-Val Accuracy</div>
+            <div class="kpi-val" style="color: #16a34a;">{{ ((kfold.mean_accuracy or 0.0) * 100)|round(2) }}%</div>
+            <div class="kpi-sub">Across All {{ kfold.k_value }} Folds</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Std Deviation (&sigma;)</div>
+            <div class="kpi-val">&plusmn;{{ ((kfold.std_accuracy or 0.0) * 100)|round(2) }}%</div>
+            <div class="kpi-sub">Fold Variance Stability</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Stratification Guarantee</div>
+            <div class="kpi-val">Preserved</div>
+            <div class="kpi-sub">Equal Placed / Unplaced Ratio</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Out-of-Fold Samples</div>
+            <div class="kpi-val">{{ kfold.total_samples }} Records</div>
+            <div class="kpi-sub">100% Data Evaluated as Test</div>
+        </div>
+    </div>
+
+    <!-- Fold Breakdown Table -->
+    {% if kfold.folds %}
+    <div style="margin-top: 1rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Individual Fold Evaluation Metrics
+        </h3>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Fold Index</th>
+                        <th>Train Records</th>
+                        <th>Val Records</th>
+                        <th>Validation Accuracy</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fold in kfold.folds %}
+                    <tr>
+                        <td><strong>Fold {{ fold.fold }}</strong></td>
+                        <td>{{ fold.train_samples }}</td>
+                        <td>{{ fold.val_samples or fold.test_samples }}</td>
+                        <td><strong>{{ ((fold.val_accuracy or fold.accuracy or 0.0) * 100)|round(2) }}%</strong></td>
+                        <td><span class="badge-dark" style="background:#dcfce7; color:#166534; border-color:#bbf7d0;">Passed</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}

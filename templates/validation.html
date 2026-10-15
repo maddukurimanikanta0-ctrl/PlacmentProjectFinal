@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}50-Sample Calibration &amp; Validation Lab - PlacementPredict{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m5">Module 5: Evaluation &amp; Calibration</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">50-Sample Calibration Lab &amp; Cross Validation</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 5 &bull; CO5</span>
+        <span class="concept-badge">Probability Calibration</span>
+        <span class="badge-dark">50-Sample Core Lab</span>
+        <span class="badge-dark badge-status-online"><span class="status-dot"></span> Active Model: {{ model_type|replace('_', ' ')|title }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        50-Sample ROC-AUC, Platt Calibration &amp; Stratified Cross Validation
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Evaluated on <strong>exactly 50 stratified held-out student records</strong>. Compares uncalibrated logistic sigmoid logits against Platt Scaling and Isotonic Regression, alongside Stratified 5-Fold Cross Validation.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m5" class="btn-back-dashboard">
+        &larr; Back to Module 5 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Configuration Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m5.validation') }}" method="POST" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 160px;">
+      <label for="n_samples">Validation Slice Size:
+        <input type="number" id="n_samples" name="n_samples" value="{{ n_samples or 50 }}" min="20" max="1000" step="10">
+      </label>
+    </div>
+    <div style="flex: 1; min-width: 140px;">
+      <label for="k_value">K-Fold Folds:
+        <input type="number" id="k_value" name="k_value" value="{{ k_value or 5 }}" min="3" max="10">
+      </label>
+    </div>
+    <div style="flex: 1.5; min-width: 200px;">
+      <label for="model_type">Model Evaluator:
+        <select id="model_type" name="model_type">
+          <option value="logistic_regression" {% if model_type == 'logistic_regression' %}selected{% endif %}>Logistic Regression (Ridge L2)</option>
+          <option value="gradient_boosting" {% if model_type == 'gradient_boosting' %}selected{% endif %}>Gradient Boosting Pipeline</option>
+        </select>
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Re-evaluate Lab</button>
+    </div>
+  </form>
+</div>
+
+{% if error %}
+  <div class="alert alert-error">
+    <strong>Error during validation evaluation:</strong> {{ error }}
+  </div>
+{% else %}
+  <!-- Special 50-Sample Probability Calibration Lab -->
+  {% include "partials/calibration_50.html" %}
+
+  <!-- Hold-Out Split Discipline Section -->
+  {% include "partials/holdout_section.html" %}
+
+  <!-- Stratified K-Fold Cross-Validation Section -->
+  {% include "partials/kfold_section.html" %}
+{% endif %}
+{% endblock %}

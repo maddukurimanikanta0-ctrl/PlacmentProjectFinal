@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Data Loading &amp; Schema - PlacementPredict{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m1">Module 1: The ML Lifecycle</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Data Ingestion &amp; Schema Exploration</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 1 &bull; CO1</span>
+        <span class="concept-badge">Data Ingestion</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.5rem; font-weight: 700; margin: 0 0 0.4rem 0;">
+        Data Loading, Schema Ingestion &amp; Data Hygiene
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0; max-width: 900px;">
+        Ingestion of the 50,000-student placement dataset, strict duplicate row elimination, missing numeric value imputation, and target distribution verification.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m1" class="btn-back-dashboard">
+        &larr; Back to Module 1 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if error %}
+    <div class="alert alert-error">
+        <strong>Could not load dataset:</strong> {{ error }}
+        <p>Ensure <code>placement_predict_50k_Dataset1.csv</code> is inside the <code>data/</code> folder.</p>
+    </div>
+{% else %}
+
+<div class="summary-grid">
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Raw Dataset Summary</h3>
+        <ul style="line-height: 1.8;">
+            <li>Rows: <strong style="color: var(--text-main);">{{ raw_summary.n_rows }}</strong></li>
+            <li>Columns: <strong style="color: var(--text-main);">{{ raw_summary.n_cols }}</strong></li>
+            <li>Duplicate rows: <strong style="color: var(--accent-rose);">{{ raw_summary.duplicate_rows }}</strong></li>
+            <li>Missing values (total): <strong style="color: var(--accent-amber);">{{ raw_summary.missing_total }}</strong></li>
+        </ul>
+        {% if raw_summary.missing_counts %}
+        <h4 style="margin-top: 1rem; color: var(--text-muted); font-size: 0.84rem;">Missing values by column</h4>
+        <table class="mini-table">
+            <thead>
+              <tr><th>Column</th><th>Missing Count</th></tr>
+            </thead>
+            <tbody>
+              {% for col, count in raw_summary.missing_counts.items() %}
+              <tr><td><code>{{ col }}</code></td><td style="color: var(--accent-amber);">{{ count }}</td></tr>
+              {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Cleaned Dataset Summary</h3>
+        <ul style="line-height: 1.8;">
+            <li>Rows: <strong style="color: var(--text-main);">{{ cleaned_summary.n_rows }}</strong></li>
+            <li>Columns: <strong style="color: var(--text-main);">{{ cleaned_summary.n_cols }}</strong></li>
+            <li>Duplicate rows: <strong style="color: var(--accent-emerald);">{{ cleaned_summary.duplicate_rows }} (Purged)</strong></li>
+            <li>Missing values (total): <strong style="color: var(--accent-emerald);">{{ cleaned_summary.missing_total }} (Imputed)</strong></li>
+        </ul>
+        <p class="hint" style="margin-top: 1rem;">
+          Numeric nulls were median-imputed; duplicates and whitespace were stripped. Handled via <code>ml/data_loader.py</code>.
+        </p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: var(--text-main);">Target Placement Distribution</h3>
+        <table class="mini-table">
+            <thead>
+              <tr><th>PlacementStatus</th><th>Count</th><th>Proportion</th></tr>
+            </thead>
+            <tbody>
+              {% for label, count in cleaned_summary.target_distribution.items() %}
+              <tr>
+                <td><strong>{{ "Placed (1)" if label == 1 or label == '1' else "Not Placed (0)" }}</strong></td>
+                <td>{{ "{:,}".format(count) }}</td>
+                <td style="color: var(--accent-cyan);">{{ "%.1f"|format((count / cleaned_summary.n_rows) * 100) }}%</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">📋 Cleaned Dataset Schema Preview (First 10 Observations)</div>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for col in preview_cols %}
+                    <th>{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in preview_rows %}
+                <tr>
+                    {% for col in preview_cols %}
+                    <td>
+                      {% if col == 'PlacementStatus' %}
+                        <span style="font-weight: 700; color: {% if row[col] == 1 %}var(--accent-emerald){% else %}var(--accent-rose){% endif %};">
+                          {{ "Placed (1)" if row[col] == 1 else "Not Placed (0)" }}
+                        </span>
+                      {% else %}
+                        {{ row[col] }}
+                      {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card" style="text-align: center; padding: 1.25rem;">
+  <a href="{{ url_for('index') }}#m1" class="btn">&larr; Return to Module 1 Dashboard</a>
+</div>
+
+{% endif %}
+{% endblock %}

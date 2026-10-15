@@ -1,0 +1,206 @@
+/* ==========================================================================
+   components.css — Cards, Tables, Buttons, Forms & Data Components
+   ========================================================================== */
+.card {
+  background-color: var(--light-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.card-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* Primary & Action Buttons */
+.btn, .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background-color: var(--dark-neutral);
+  color: var(--text-on-dark);
+  border: 1px solid var(--dark-neutral);
+  padding: 0.55rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn:hover, .btn-primary:hover {
+  background-color: var(--dark-neutral-hover);
+  border-color: var(--dark-neutral-hover);
+  color: var(--text-on-dark);
+}
+
+.btn-secondary, .btn-back-dashboard, .btn-return-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: var(--light-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  padding: 0.55rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover, .btn-back-dashboard:hover, .btn-return-dashboard:hover {
+  background-color: var(--light-subtle);
+  border-color: var(--dark-neutral);
+}
+
+/* Preset Buttons */
+.presets-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--light-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.presets-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.btn-preset {
+  background-color: var(--light-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-preset:hover {
+  background-color: var(--dark-neutral);
+  color: var(--text-on-dark);
+  border-color: var(--dark-neutral);
+}
+
+/* Forms & Inputs */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+input, select, textarea {
+  width: 100%;
+  background-color: var(--light-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--dark-neutral);
+  box-shadow: 0 0 0 1px var(--dark-neutral);
+}
+
+/* Tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  margin-top: 0.75rem;
+}
+
+table, .data-table, .mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--light-surface);
+  text-align: left;
+}
+
+th {
+  background-color: var(--light-subtle);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+td {
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-light);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background-color: #fafbfd;
+}
+
+/* Summary Grid & Boxes */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.summary-box {
+  background-color: var(--light-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+.summary-box h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}

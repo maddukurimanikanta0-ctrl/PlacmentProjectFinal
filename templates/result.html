@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result - PlacementPredict{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m1">Module 1: The ML Lifecycle</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Live Inference Result</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 1 &bull; CO1</span>
+        <span class="concept-badge">Live Prediction Service</span>
+        <span class="badge-dark">Gradient Boosting Inference</span>
+      </div>
+      <h1 style="color: var(--text-main); font-size: 1.85rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Candidate Prediction &amp; Placement Readiness Fit
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0; max-width: 900px;">
+        End-to-End Prediction Service Trace: HTTP POST &rarr; Feature Lookup &rarr; Gradient Boosting Inference &rarr; Archetype Classification.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m1" class="btn-back-dashboard">
+        &larr; Back to Module 1 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if result.error %}
+  <div class="card" style="border-left: 5px solid var(--status-danger-border); background: var(--bg-card);">
+    <div class="card-title" style="color: var(--status-danger-text);">Prediction Error</div>
+    <p>{{ result.error }}</p>
+    <div style="margin-top: 1rem;">
+      <a href="{{ url_for('index') }}" class="btn">&larr; Return to Dashboard</a>
+    </div>
+  </div>
+{% else %}
+
+  {% set is_placed = (result.prediction == 1 or result.status == 'Placed') %}
+
+  <!-- Primary Prediction Outcome Box -->
+  <div class="result-box {% if is_placed %}result-placed{% else %}result-not-placed{% endif %}">
+    <div class="badge-dark" style="margin-bottom: 0.75rem;">
+      Production Model Inference: Gradient Boosting Pipeline
+    </div>
+    
+    <div>
+      <span class="status-badge-lg {% if is_placed %}status-placed{% else %}status-not-placed{% endif %}">
+        {{ "PREDICTED: PLACED" if is_placed else "PREDICTED: NOT PLACED" }}
+      </span>
+    </div>
+
+    <p style="font-size: 1.05rem; color: var(--text-body); max-width: 650px; margin: 0 auto; line-height: 1.6;">
+      {% if is_placed %}
+        Based on academic standing, skill ratings, and practical project profile, the ML model estimates a <strong style="color: var(--accent-emerald);">{{ result.probability_placed }}%</strong> probability of campus placement.
+      {% else %}
+        Based on current assessment scores and project benchmarks, the ML model estimates a <strong style="color: var(--accent-rose);">{{ result.probability_not_placed }}%</strong> risk of non-placement without skill intervention.
+      {% endif %}
+    </p>
+
+    <!-- Probability Meter -->
+    <div class="prob-meter-container">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700;">
+        <span style="color: var(--accent-emerald);">Placement Probability: {{ result.probability_placed }}%</span>
+        <span style="color: var(--accent-rose);">Risk Probability: {{ result.probability_not_placed }}%</span>
+      </div>
+      <div class="prob-bar">
+        <div class="{% if is_placed %}prob-fill-placed{% else %}prob-fill-not-placed{% endif %}" style="width: {{ result.probability_placed }}%;"></div>
+      </div>
+    </div>
+
+    <!-- M2 & M4 Model Connections -->
+    <div class="kpi-grid" style="max-width: 750px; margin: 1.5rem auto 0 auto;">
+      {% if result.projected_salary %}
+        <div class="kpi-card">
+          <div class="kpi-title">Projected Package (M2 Demo)</div>
+          <div class="kpi-val" style="color: var(--accent-cyan); font-size: 1.4rem;">{{ result.projected_salary }}</div>
+          <div class="kpi-sub">Linear Regressor on Placed Cohort</div>
+        </div>
+      {% endif %}
+      <div class="kpi-card">
+        <div class="kpi-title">Student Archetype (M4)</div>
+        <div class="kpi-val" style="color: var(--text-main); font-size: 1.15rem; font-weight: 700;">
+          {{ result.cluster_archetype }}
+        </div>
+        <div class="kpi-sub">K-Means Student Segmentation</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Inference Confidence</div>
+        <div class="kpi-val" style="color: var(--accent-emerald); font-size: 1.4rem;">{{ result.confidence }}%</div>
+        <div class="kpi-sub">Production ROC-AUC: 0.9796</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommendations / Actionable Interventions -->
+  <div class="card">
+    <div class="card-title">Actionable Skill Recommendations &amp; Guidance</div>
+    <ul style="padding-left: 1.5rem; color: var(--text-body); font-size: 0.92rem; line-height: 1.8;">
+      {% for rec in result.recommendations %}
+        <li>{{ rec }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Submitted Features Table -->
+  <div class="card">
+    <div class="card-title">Traced Student Input Features (M1 Schema)</div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+            <th>Attribute</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>CGPA</strong></td>
+            <td>{{ inputs.CGPA or (result.inputs and result.inputs.CGPA) }} / 10</td>
+            <td><strong>Attendance</strong></td>
+            <td>{{ inputs.AttendancePercent or (result.inputs and result.inputs.AttendancePercent) }}%</td>
+          </tr>
+          <tr>
+            <td><strong>Coding Test Score</strong></td>
+            <td>{{ inputs.CodingTestScore or (result.inputs and result.inputs.CodingTestScore) }} / 100</td>
+            <td><strong>Aptitude Test Score</strong></td>
+            <td>{{ inputs.AptitudeTestScore or (result.inputs and result.inputs.AptitudeTestScore) }} / 100</td>
+          </tr>
+          <tr>
+            <td><strong>Internships</strong></td>
+            <td>{{ inputs.Internships or (result.inputs and result.inputs.Internships) }}</td>
+            <td><strong>Projects Completed</strong></td>
+            <td>{{ inputs.Projects or (result.inputs and result.inputs.Projects) }}</td>
+          </tr>
+          <tr>
+            <td><strong>College Tier</strong></td>
+            <td>{{ inputs.CollegeTier or (result.inputs and result.inputs.CollegeTier) }}</td>
+            <td><strong>Stream / Branch</strong></td>
+            <td>{{ inputs.Stream or (result.inputs and result.inputs.Stream) }}</td>
+          </tr>
+          <tr>
+            <td><strong>Mock Interview Score</strong></td>
+            <td>{{ inputs.MockInterviewScore or (result.inputs and result.inputs.MockInterviewScore) }} / 100</td>
+            <td><strong>History of Backlogs</strong></td>
+            <td>{{ inputs.HistoryOfBacklogs or (result.inputs and result.inputs.HistoryOfBacklogs) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;" class="no-print">
+      <a href="{{ url_for('index') }}#m1" class="btn">&larr; Return to Dashboard</a>
+      <button type="button" class="btn-return-dashboard" onclick="window.print()">Print Student Report (Ctrl + P)</button>
+    </div>
+  </div>
+
+{% endif %}
+{% endblock %}

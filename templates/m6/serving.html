@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Production Serving &amp; REST Endpoints - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m6">Module 6: ML Engineering</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Production Serving Frameworks</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 6 &bull; CO6</span>
+        <span class="concept-badge">Low-Latency Serving</span>
+        <span class="badge-dark">p95 Latency: {{ telemetry.latency_percentiles_ms.p95 }} ms</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Serving Frameworks: REST, FastAPI &amp; Telemetry
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Deploying ML models as scalable microservices: Comparing Flask synchronous serving vs FastAPI asynchronous ASGI workers and low-latency gRPC streaming.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m6" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Latency Telemetry KPI Grid -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Median Latency (p50)</div>
+    <div class="kpi-val" style="color: #15803d;">{{ telemetry.latency_percentiles_ms.p50 }} ms</div>
+    <div class="kpi-sub">50% Requests Faster Than</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Tail Latency (p99)</div>
+    <div class="kpi-val">{{ telemetry.latency_percentiles_ms.p99 }} ms</div>
+    <div class="kpi-sub">99th Percentile SLA Bound</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Throughput</div>
+    <div class="kpi-val">{{ telemetry.throughput_rps }} <small style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);">RPS</small></div>
+    <div class="kpi-sub">Requests Per Second</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Error Rate</div>
+    <div class="kpi-val" style="color: #15803d;">{{ telemetry.error_rate_pct }}%</div>
+    <div class="kpi-sub">HTTP 5xx Failure Rate</div>
+  </div>
+</div>
+
+<!-- Endpoints Table -->
+<div class="card">
+  <div class="card-title">Production REST Endpoints Exposed by Service</div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Endpoint</th>
+          <th>HTTP Method</th>
+          <th>Functionality</th>
+          <th>Sample Payload / Response</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>/predict</code></td>
+          <td><code>POST</code></td>
+          <td>Online single student inference</td>
+          <td>Web Form Multi-Feature Submission</td>
+        </tr>
+        <tr>
+          <td><code>/api/predict</code></td>
+          <td><code>POST</code></td>
+          <td>JSON REST inference for batch/API clients</td>
+          <td><code>{"CGPA": 8.5, "CodingTestScore": 85}</code></td>
+        </tr>
+        <tr>
+          <td><code>/health</code></td>
+          <td><code>GET</code></td>
+          <td>Liveness &amp; syllabus module health probe</td>
+          <td><code>{"status": "healthy", "modules": 6}</code></td>
+        </tr>
+        <tr>
+          <td><code>/api/validation</code></td>
+          <td><code>GET</code></td>
+          <td>Validation &amp; 50-sample calibration JSON API</td>
+          <td><code>{"calibration_50_samples": {...}}</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

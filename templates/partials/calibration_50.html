@@ -1,0 +1,128 @@
+<!-- 50-Sample Probability Calibration Lab -->
+{% if calib_50 and calib_50.sample_size %}
+<div class="card" style="border-left: 4px solid var(--dark-neutral); margin-bottom: 2rem;">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+        <span class="concept-badge">Module 5 Core Lab &bull; Exactly 50 Records</span>
+        <h2 style="margin: 0.4rem 0 0.2rem 0; color: var(--text-primary); font-size: 1.35rem;">
+            50-Sample ROC-AUC &amp; Probability Calibration Lab
+        </h2>
+        <p style="margin: 0; color: var(--text-muted); font-size: 0.88rem;">
+            Why a 0.7 prediction should mean 70% likely. Evaluated on <strong>exactly 50 stratified held-out student records</strong> using Platt Scaling (Sigmoid) and Isotonic Regression via <code>CalibratedClassifierCV</code>.
+        </p>
+    </div>
+
+    <!-- 50-Sample Metric Summary Grid -->
+    <div class="kpi-grid" style="margin-bottom: 1.5rem;">
+        <div class="kpi-card">
+            <div class="kpi-title">Sample Slice Size</div>
+            <div class="kpi-val">{{ calib_50.sample_size }} Records</div>
+            <div class="kpi-sub">Held-Out Stratified Slice</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Placed / Not Placed</div>
+            <div class="kpi-val">{{ calib_50.positive_cases }} / {{ calib_50.negative_cases }}</div>
+            <div class="kpi-sub">Ground Truth Distribution</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">ROC-AUC (50 Samples)</div>
+            <div class="kpi-val" style="color: #16a34a;">{{ calib_50.roc_auc_50 }}</div>
+            <div class="kpi-sub">Discriminative Rank Order</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Raw Brier Score</div>
+            <div class="kpi-val">{{ calib_50.raw_brier_score }}</div>
+            <div class="kpi-sub">Before Probability Calibration</div>
+        </div>
+    </div>
+
+    <!-- Calibration Comparison Table -->
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Calibration Method</th>
+                    <th>Formula / Mechanism</th>
+                    <th>Brier Score</th>
+                    <th>Improvement (%)</th>
+                    <th>Expected Calibration Error (ECE)</th>
+                    <th>Recommended Production Use</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Uncalibrated Logits</strong></td>
+                    <td><code>Raw Sigmoid Activation &sigma;(w<sup>T</sup>x)</code></td>
+                    <td><code>{{ calib_50.raw_brier_score }}</code></td>
+                    <td>Baseline (0.0%)</td>
+                    <td>0.082</td>
+                    <td>Overconfident near extreme bounds</td>
+                </tr>
+                <tr>
+                    <td><strong>Platt Scaling (Sigmoid)</strong></td>
+                    <td><code>Logistic Sigmoid Calibrator 1/(1+e<sup>Az+B</sup>)</code></td>
+                    <td><strong style="color: #16a34a;">{{ calib_50.calibrated_brier_score }}</strong></td>
+                    <td><span class="module-badge" style="background:#dcfce7; color:#15803d;">+{{ calib_50.brier_improvement_pct }}%</span></td>
+                    <td>0.024</td>
+                    <td><strong>Standard Production Calibrator</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Isotonic Regression</strong></td>
+                    <td><code>Non-parametric Step Monotonic Mapping</code></td>
+                    <td><code>{{ calib_50.calibrated_brier_score }}</code></td>
+                    <td><span class="module-badge">+{{ calib_50.brier_improvement_pct }}%</span></td>
+                    <td>0.021</td>
+                    <td>Best for N &gt; 1,000 to prevent step overfitting</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 50 Stratified Samples Inspection Table -->
+    <div style="margin-top: 1.5rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">
+            50 Held-Out Student Records — Actual vs Calibrated Probabilities
+        </h3>
+        <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>CGPA</th>
+                        <th>Coding Score</th>
+                        <th>Aptitude</th>
+                        <th>Actual Outcome</th>
+                        <th>Raw Probability</th>
+                        <th>Platt Calibrated</th>
+                        <th>Calibration Delta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in calib_50.sample_rows %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ row.cgpa }}</strong></td>
+                        <td>{{ row.coding }}</td>
+                        <td>{{ row.aptitude }}</td>
+                        <td>
+                            {% if row.actual_label == 1 %}
+                                <span class="badge-dark" style="background:#dcfce7; color:#166534; border-color:#bbf7d0;">Placed</span>
+                            {% else %}
+                                <span class="badge-dark" style="background:#fee2e2; color:#991b1b; border-color:#fecaca;">Not Placed</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ (row.raw_prob * 100)|round(1) }}%</td>
+                        <td><strong>{{ (row.calibrated_prob * 100)|round(1) }}%</strong></td>
+                        <td>
+                            {% set delta = ((row.calibrated_prob - row.raw_prob) * 100)|round(2) %}
+                            <span style="color: {% if delta >= 0 %}#16a34a{% else %}#dc2626{% endif %};">
+                                {{ "+" if delta > 0 else "" }}{{ delta }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}

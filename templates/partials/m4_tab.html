@@ -1,0 +1,88 @@
+<!-- Module 4 View Container -->
+<div class="module-view-container" id="module-view-m4">
+  <div class="module-header-banner">
+    <div class="module-header-info">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; align-items: center;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="concept-badge">Unsupervised Learning</span>
+      </div>
+      <h2>Unsupervised Learning — Clustering, PCA &amp; Archetypes</h2>
+      <p>Partitioning student cohorts without outcome labels using K-Means, hierarchical dendrograms, DBSCAN density models, PCA, and anomaly isolation.</p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('m4.unsupervised') }}" class="btn btn-primary">&rarr; Clustering Dashboard</a>
+    </div>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Partitioning</span>
+        <h3 class="concept-title">K-Means &amp; Student Archetypes</h3>
+        <p class="concept-summary">Lloyd's algorithm with K-Means++ initialization discovering 4 distinct student clusters with high silhouette separation.</p>
+        <ul class="concept-bullets">
+          <li>Elbow method &amp; silhouette score analysis (s = 0.34)</li>
+          <li>Balanced Performers (35.3%), Tech Specialists (1.4%)</li>
+          <li>Foundational Cohort (43.7%), Elite Candidates (19.5%)</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m4.kmeans') }}" class="concept-action-btn">Inspect K-Means Archetypes &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Hierarchical</span>
+        <h3 class="concept-title">Agglomerative Clustering &amp; Dendrograms</h3>
+        <p class="concept-summary">Bottom-up hierarchical merging comparing Ward's minimum variance, Complete, Average, and Single linkage distances.</p>
+        <ul class="concept-bullets">
+          <li>Dendrogram tree hierarchy and distance cutoff thresholds</li>
+          <li>No need to pre-specify K in advance</li>
+          <li>Pairwise Euclidean distance matrices</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m4.hierarchical') }}" class="concept-action-btn">Explore Hierarchical Model &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Density-Based</span>
+        <h3 class="concept-title">DBSCAN Density Clustering</h3>
+        <p class="concept-summary">Discovering non-convex density clusters and automatically isolating sparse noise points without forcing them into clusters.</p>
+        <ul class="concept-bullets">
+          <li>Core points, border points, and noise classification</li>
+          <li>Hyperparameters &epsilon; radius and min_samples</li>
+          <li>Robust handling of non-spherical cohorts</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m4.dbscan') }}" class="concept-action-btn">Explore DBSCAN &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Dimensionality Reduction</span>
+        <h3 class="concept-title">PCA &amp; Manifold Projections (t-SNE/UMAP)</h3>
+        <p class="concept-summary">Standardized 2D projection capturing 71.38% of overall feature variance, with non-linear manifold previews.</p>
+        <ul class="concept-bullets">
+          <li>Eigenvector loadings along PC1 and PC2</li>
+          <li>Critical requirement of standardization before PCA</li>
+          <li>t-SNE &amp; UMAP non-metric visual workhorses</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m4.pca') }}" class="concept-action-btn">Explore PCA &amp; Embeddings &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Outlier Profiling</span>
+        <h3 class="concept-title">Isolation Forest Anomaly Detection</h3>
+        <p class="concept-summary">Isolating anomalous student profiles (e.g. high CGPA with zero attendance or low test scores) using random recursive partitioning.</p>
+        <ul class="concept-bullets">
+          <li>Shorter average path lengths flag rare anomalies</li>
+          <li>Contamination rate calibration</li>
+          <li>Cluster &amp; anomaly labels as downstream features</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m4.anomaly_detection') }}" class="concept-action-btn">Explore Anomaly Detection &rarr;</a>
+    </div>
+  </div>
+</div>

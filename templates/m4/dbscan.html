@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}DBSCAN Density-Based Clustering - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m4">Module 4: Unsupervised</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">DBSCAN Density Clustering</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="concept-badge">Density-Based Partitioning</span>
+        <span class="badge-dark">&epsilon; = {{ eps }} &bull; MinPts = {{ min_samples }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        DBSCAN: Density-Based Spatial Clustering &amp; Noise Detection
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Density-Based Spatial Clustering of Applications with Noise. Identifies dense clusters of arbitrary non-convex geometries and isolates sparse noise anomalies (-1).
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m4" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Tuning Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m4.dbscan') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px;">
+      <label for="eps">Neighborhood Radius (&epsilon;):
+        <input type="number" step="0.1" id="eps" name="eps" value="{{ eps }}" min="0.5" max="5.0">
+      </label>
+    </div>
+    <div style="flex: 1; min-width: 140px;">
+      <label for="min_samples">Core Threshold (MinPts):
+        <input type="number" id="min_samples" name="min_samples" value="{{ min_samples }}" min="2" max="20">
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Run Density Scan</button>
+    </div>
+  </form>
+</div>
+
+<!-- DBSCAN Results KPI Grid -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Clusters Discovered</div>
+    <div class="kpi-val">{{ db_data.num_clusters_found }} <small style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);">Cohorts</small></div>
+    <div class="kpi-sub">Non-Convex High Density Regions</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Noise / Outliers Flagged</div>
+    <div class="kpi-val" style="color: #dc2626;">{{ db_data.noise_points_count }}</div>
+    <div class="kpi-sub">{{ db_data.noise_percentage }}% Sparse Cohort Records</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Sample Slice Analyzed</div>
+    <div class="kpi-val">{{ db_data.total_analyzed }}</div>
+    <div class="kpi-sub">Standardized Student Records</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">DBSCAN Guarantee</div>
+    <div class="kpi-val">No K Specified</div>
+    <div class="kpi-sub">Data-Driven Topology</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Density Topology Explanation</div>
+  <p class="card-subtitle">{{ db_data.density_rationale }}</p>
+  <ul style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.25rem;">
+    <li><strong>Core Points</strong>: Records containing at least <code>min_samples</code> neighbors within distance &epsilon;.</li>
+    <li><strong>Border Points</strong>: Records reachable within &epsilon; of a core point but lacking sufficient neighbor density themselves.</li>
+    <li><strong>Noise Points (Label -1)</strong>: Outlier records belonging to neither category. Natural anomaly detector!</li>
+  </ul>
+</div>
+{% endblock %}

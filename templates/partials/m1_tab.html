@@ -1,0 +1,91 @@
+<!-- Module 1 View Container -->
+<div class="module-view-container active" id="module-view-m1">
+  <div class="module-header-banner">
+    <div class="module-header-info">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; align-items: center;">
+        <span class="module-badge">Module 1 &bull; CO1</span>
+        <span class="concept-badge">ML Lifecycle Architecture</span>
+      </div>
+      <h2>PlacementPredict as a System — The ML Lifecycle</h2>
+      <p>A working prediction service running on day one. Tracing requests from HTTP ingress through preprocessing, inference, and drift monitoring.</p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('m1.prediction_service') }}" class="btn btn-primary">&rarr; Live Prediction Service</a>
+    </div>
+  </div>
+
+  <!-- Lifecycle Stage Strip -->
+  <div class="lifecycle-card no-print">
+    <div class="lifecycle-stage"><span class="stage-num">1</span><span class="stage-text">Raw Data<small>50k CSV</small></span></div>
+    <span class="lifecycle-divider">&rarr;</span>
+    <div class="lifecycle-stage"><span class="stage-num">2</span><span class="stage-text">Clean Data<small>Zero Dups</small></span></div>
+    <span class="lifecycle-divider">&rarr;</span>
+    <div class="lifecycle-stage"><span class="stage-num">3</span><span class="stage-text">Features<small>Standardized</small></span></div>
+    <span class="lifecycle-divider">&rarr;</span>
+    <div class="lifecycle-stage"><span class="stage-num">4</span><span class="stage-text">Trained Model<small>GradientBoost</small></span></div>
+    <span class="lifecycle-divider">&rarr;</span>
+    <div class="lifecycle-stage"><span class="stage-num">5</span><span class="stage-text">Package<small>Joblib/ONNX</small></span></div>
+    <span class="lifecycle-divider">&rarr;</span>
+    <div class="lifecycle-stage"><span class="stage-num">6</span><span class="stage-text">Serve<small>Flask/FastAPI</small></span></div>
+    <span class="lifecycle-divider">&rarr;</span>
+    <div class="lifecycle-stage"><span class="stage-num">7</span><span class="stage-text">Monitor<small>PSI Drift</small></span></div>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Interactive Service</span>
+        <h3 class="concept-title">Live Candidate Placement Predictor</h3>
+        <p class="concept-summary">Real-time candidate profile scoring using packaged pipeline artifacts with zero training-serving skew.</p>
+        <ul class="concept-bullets">
+          <li>Multi-feature form ingestion (CGPA, Coding, Soft Skills)</li>
+          <li>Dual outcome: Placement Classification + Salary Package</li>
+          <li>K-Means student archetype segmentation</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m1.prediction_service') }}" class="concept-action-btn">Launch Prediction Engine &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Data Engineering</span>
+        <h3 class="concept-title">Data Ingestion &amp; Schema Pipeline</h3>
+        <p class="concept-summary">Ingestion of 50,000 anonymized student records modeled on Indian engineering campus placements.</p>
+        <ul class="concept-bullets">
+          <li>Duplicate record elimination &amp; integrity checks</li>
+          <li>Type casting and nullable field validation</li>
+          <li>Target label balance (67.6% placed cohort)</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m1.data_loading') }}" class="concept-action-btn">Explore Data Pipeline &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Feature Engineering</span>
+        <h3 class="concept-title">Preprocessing &amp; Skew Elimination</h3>
+        <p class="concept-summary">Unified ColumnTransformer applying standard scaling, median imputation, and categorical encoding.</p>
+        <ul class="concept-bullets">
+          <li>Elimination of the training-serving boundary bug class</li>
+          <li>StandardScaler z-score standardization for gradient methods</li>
+          <li>One-Hot Encoding for Stream, Tier, and Backlogs</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m1.preprocessing') }}" class="concept-action-btn">Inspect Preprocessor &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Data Analysis</span>
+        <h3 class="concept-title">Exploratory Data Analytics (EDA)</h3>
+        <p class="concept-summary">Statistical distributions, correlation matrices, and placement rate distributions across academic tiers.</p>
+        <ul class="concept-bullets">
+          <li>High correlation between Coding Score and Placement</li>
+          <li>CGPA distribution by placement outcome</li>
+          <li>College tier and internship impact visualization</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m1.eda') }}" class="concept-action-btn">View Analytics &amp; Charts &rarr;</a>
+    </div>
+  </div>
+</div>

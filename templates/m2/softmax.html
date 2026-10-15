@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Softmax / Multinomial Logistic Regression - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m2">Module 2: Linear Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Softmax Multinomial Regression</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 2 &bull; CO2</span>
+        <span class="concept-badge">Multi-Class Extension</span>
+        <span class="badge-dark">Model Accuracy: {{ (model_res.accuracy * 100)|round(1) }}%</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Softmax / Multinomial Logistic Regression
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Generalizing binary logistic regression to multi-class prediction with the softmax function: P(y = k | x) = exp(w<sub>k</sub><sup>T</sup>x) / &sum; exp(w<sub>j</sub><sup>T</sup>x).
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m2" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Tier Predictor -->
+<div class="card" style="margin-bottom: 1.5rem;">
+  <div class="card-title">Interactive Multi-Class Tier Predictor</div>
+  <p class="card-subtitle">Calculates softmax class probabilities for a student profile across all three salary bands:</p>
+  
+  <form action="{{ url_for('m2.softmax_regression') }}" method="POST">
+    <div class="grid">
+      <div><label for="CGPA">CGPA: <input type="number" step="0.1" name="CGPA" id="CGPA" value="{{ form_vals.CGPA or 8.2 }}"></label></div>
+      <div><label for="CodingTestScore">Coding Test: <input type="number" step="1" name="CodingTestScore" id="CodingTestScore" value="{{ form_vals.CodingTestScore or 85 }}"></label></div>
+      <div><label for="AptitudeTestScore">Aptitude: <input type="number" step="1" name="AptitudeTestScore" id="AptitudeTestScore" value="{{ form_vals.AptitudeTestScore or 78 }}"></label></div>
+      <div><label for="Internships">Internships: <input type="number" name="Internships" id="Internships" value="{{ form_vals.Internships or 2 }}"></label></div>
+      <div><label for="Projects">Projects: <input type="number" name="Projects" id="Projects" value="{{ form_vals.Projects or 3 }}"></label></div>
+      <div><label for="MockInterviewScore">Mock Interview: <input type="number" name="MockInterviewScore" id="MockInterviewScore" value="{{ form_vals.MockInterviewScore or 80 }}"></label></div>
+    </div>
+    <div style="margin-top: 1rem;">
+      <button type="submit" class="btn btn-primary">Infer Softmax Probabilities &rarr;</button>
+    </div>
+  </form>
+
+  {% if prediction %}
+  <div style="margin-top: 1.5rem; padding: 1.25rem; background: var(--light-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+    <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem;">
+      Predicted Tier: <strong style="color: #15803d;">{{ prediction.predicted_tier }}</strong>
+    </h3>
+    <div class="kpi-grid" style="margin-top: 1rem; margin-bottom: 0;">
+      {% for prob in prediction.probabilities %}
+      <div class="kpi-card" style="{% if prob.is_predicted %}border-color: #16a34a; background: #f0fdf4;{% endif %}">
+        <div class="kpi-title">{{ prob.tier }}</div>
+        <div class="kpi-val" style="{% if prob.is_predicted %}color: #15803d;{% endif %}">{{ prob.probability }}%</div>
+        <div class="kpi-sub">Softmax Normalized Logit</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Class Weights Table -->
+<div class="card">
+  <div class="card-title">Class-Specific Feature Weights (w<sub>k</sub>)</div>
+  <p class="card-subtitle">Notice how higher Coding Scores and CGPA heavily drive Dream Package odds:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Placement Tier</th>
+          <th>Top Positive Predictors</th>
+          <th>Intercept</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tname, coef_info in model_res.tier_coefficients.items() %}
+        <tr>
+          <td><strong>{{ tname }}</strong></td>
+          <td>
+            {% for feat, val in coef_info.top_positive %}
+              <span class="concept-badge">{{ feat }}: +{{ val }}</span>
+            {% endfor %}
+          </td>
+          <td><code>{{ coef_info.intercept }}</code></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

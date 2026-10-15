@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Random Forest &amp; Bagging Ensembles - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m3">Module 3: Tree Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Random Forest &amp; Bagging</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 3 &bull; CO3</span>
+        <span class="concept-badge">Bagging &amp; Variance Reduction</span>
+        <span class="badge-dark">OOB Accuracy: {{ (rf_res.oob_score * 100)|round(2) }}%</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Random Forests &amp; Out-of-Bag (OOB) Generalization
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Bootstrap aggregation (bagging) combined with random feature subspace sampling (&radic;p) to decorrelate individual trees and dramatically reduce variance.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m3" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Hyperparameter Controls -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m3.random_forest') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px;">
+      <label for="n_trees">Number of Trees (B):
+        <input type="number" id="n_trees" name="n_trees" value="{{ n_trees }}" min="10" max="250" step="10">
+      </label>
+    </div>
+    <div style="flex: 1; min-width: 160px;">
+      <label for="max_features">Feature Subspace (m):
+        <select id="max_features" name="max_features">
+          <option value="sqrt" {% if max_features == 'sqrt' %}selected{% endif %}>&radic;p (Square Root ~ 3 features)</option>
+          <option value="log2" {% if max_features == 'log2' %}selected{% endif %}>log2(p) Subspace</option>
+        </select>
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Fit Ensemble &rarr;</button>
+    </div>
+  </form>
+</div>
+
+<!-- Performance Metrics -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Out-of-Bag (OOB) Accuracy</div>
+    <div class="kpi-val" style="color: #16a34a;">{{ (rf_res.oob_score * 100)|round(2) }}%</div>
+    <div class="kpi-sub">Built-in Unbiased Validation</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">OOB Error Rate</div>
+    <div class="kpi-val">{{ (rf_res.oob_error * 100)|round(2) }}%</div>
+    <div class="kpi-sub">Out-of-Bag Loss</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Held-Out Test Accuracy</div>
+    <div class="kpi-val">{{ (rf_res.test_accuracy * 100)|round(2) }}%</div>
+    <div class="kpi-sub">Test Split Generalization</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Held-Out ROC-AUC</div>
+    <div class="kpi-val">{{ rf_res.test_roc_auc }}</div>
+    <div class="kpi-sub">Ensemble Discrimination</div>
+  </div>
+</div>
+
+<!-- Variance Reduction Proof Box -->
+<div class="card">
+  <div class="card-title">Mathematical Foundation of Variance Reduction</div>
+  <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6;">
+    For an ensemble of <code>B</code> individual trees each having variance <code>&sigma;&sup2;</code> with average pairwise correlation <code>&rho;</code>, the total ensemble variance is given by:
+    <br><br>
+    <code style="background: var(--light-subtle); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.95rem; display: inline-block;">
+      Var(f&#772;) = &rho; &bull; &sigma;&sup2; + [ (1 - &rho;) / B ] &bull; &sigma;&sup2;
+    </code>
+    <br><br>
+    By randomly subsampling <code>m = &radic;p</code> features at each split, Random Forests decrease the pairwise tree correlation <code>&rho;</code>, driving total ensemble variance down far more effectively than standard bagging!
+  </p>
+</div>
+{% endblock %}

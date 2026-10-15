@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PlacementPredict - ML System (M1–M6){% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Dark Neutral Global Header with Expandable M1–M6 Navigation -->
+    <header class="dark-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <button class="mobile-nav-toggle no-print" onclick="toggleMobileNav()" aria-label="Toggle Navigation">&#9776;</button>
+                <h1 class="brand-title">
+                    <a href="{{ url_for('index') }}">PlacementPredict</a>
+                </h1>
+                <span class="brand-divider">/</span>
+                <span class="brand-subtitle">ML System (Course 25SC2107E)</span>
+            </div>
+
+            <!-- Expandable M1–M6 Global Navigation Bar -->
+            <nav class="dashboard-nav-bar no-print" id="main-nav-bar">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    Dashboard
+                </a>
+
+                <!-- M1 Dropdown -->
+                <div class="nav-module-dropdown {% if active_module == 'm1' %}open-parent{% endif %}" id="nav-dropdown-m1">
+                    <button type="button" class="nav-module-btn {% if active_module == 'm1' %}active-module{% endif %}" onclick="toggleModuleNav('m1', event)">
+                        <span>M1: Lifecycle</span> <span class="chevron-icon">&#9662;</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="nav-dropdown-header">Module 1 Models &amp; Pipelines</div>
+                        <a href="{{ url_for('m1.prediction_service') }}" class="nav-model-link {% if request.path.endswith('/prediction-service') %}active-model{% endif %}">
+                            <span class="nav-model-title">Prediction Service &amp; Trace</span>
+                            <span class="nav-model-desc">Live request-to-inference pipeline</span>
+                        </a>
+                        <a href="{{ url_for('m1.data_loading') }}" class="nav-model-link {% if request.path.startswith('/data') %}active-model{% endif %}">
+                            <span class="nav-model-title">Data Ingestion &amp; Schema</span>
+                            <span class="nav-model-desc">50k records hygiene &amp; null checks</span>
+                        </a>
+                        <a href="{{ url_for('m1.preprocessing') }}" class="nav-model-link {% if request.path.startswith('/prep') %}active-model{% endif %}">
+                            <span class="nav-model-title">Preprocessing &amp; Skew Check</span>
+                            <span class="nav-model-desc">Imputation &amp; standard scaling</span>
+                        </a>
+                        <a href="{{ url_for('m1.eda') }}" class="nav-model-link {% if request.path.startswith('/eda') %}active-model{% endif %}">
+                            <span class="nav-model-title">Exploratory Analytics (EDA)</span>
+                            <span class="nav-model-desc">Feature distributions &amp; heatmap</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- M2 Dropdown -->
+                <div class="nav-module-dropdown {% if active_module == 'm2' %}open-parent{% endif %}" id="nav-dropdown-m2">
+                    <button type="button" class="nav-module-btn {% if active_module == 'm2' %}active-module{% endif %}" onclick="toggleModuleNav('m2', event)">
+                        <span>M2: Linear</span> <span class="chevron-icon">&#9662;</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="nav-dropdown-header">Module 2 Linear Models</div>
+                        <a href="{{ url_for('m2.linear_regression') }}" class="nav-model-link {% if request.path.startswith('/linear') %}active-model{% endif %}">
+                            <span class="nav-model-title">Linear Regression (Salary)</span>
+                            <span class="nav-model-desc">Normal equations vs Gradient Descent</span>
+                        </a>
+                        <a href="{{ url_for('m2.logistic_regression') }}" class="nav-model-link {% if request.path.startswith('/logistic') %}active-model{% endif %}">
+                            <span class="nav-model-title">Logistic Regression (L2)</span>
+                            <span class="nav-model-desc">Sigmoid boundary &amp; odds ratios</span>
+                        </a>
+                        <a href="{{ url_for('m2.regularization') }}" class="nav-model-link {% if request.path.endswith('/regularization') %}active-model{% endif %}">
+                            <span class="nav-model-title">Regularization (Ridge/Lasso)</span>
+                            <span class="nav-model-desc">L1 diamond sparsity vs L2 sphere</span>
+                        </a>
+                        <a href="{{ url_for('m2.softmax_regression') }}" class="nav-model-link {% if request.path.endswith('/softmax-regression') %}active-model{% endif %}">
+                            <span class="nav-model-title">Softmax / Multinomial</span>
+                            <span class="nav-model-desc">Multi-class placement packages</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- M3 Dropdown -->
+                <div class="nav-module-dropdown {% if active_module == 'm3' %}open-parent{% endif %}" id="nav-dropdown-m3">
+                    <button type="button" class="nav-module-btn {% if active_module == 'm3' %}active-module{% endif %}" onclick="toggleModuleNav('m3', event)">
+                        <span>M3: Trees</span> <span class="chevron-icon">&#9662;</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="nav-dropdown-header">Module 3 Tree Architectures</div>
+                        <a href="{{ url_for('m3.decision_tree') }}" class="nav-model-link {% if request.path.endswith('/decision-tree') %}active-model{% endif %}">
+                            <span class="nav-model-title">Decision Tree &amp; Pruning</span>
+                            <span class="nav-model-desc">CART Gini &amp; cost-complexity alpha</span>
+                        </a>
+                        <a href="{{ url_for('m3.random_forest') }}" class="nav-model-link {% if request.path.endswith('/random-forest') %}active-model{% endif %}">
+                            <span class="nav-model-title">Random Forest (Bagging)</span>
+                            <span class="nav-model-desc">Subspace sampling &amp; OOB error</span>
+                        </a>
+                        <a href="{{ url_for('m3.tree_models') }}" class="nav-model-link {% if request.path.startswith('/tree') or request.path.endswith('/gradient-boosting') %}active-model{% endif %}">
+                            <span class="nav-model-title">Gradient Boosting (GBDT/LGBM)</span>
+                            <span class="nav-model-desc">Production tabular winner (97.96% AUC)</span>
+                        </a>
+                        <a href="{{ url_for('m3.feature_importance') }}" class="nav-model-link {% if request.path.endswith('/feature-importance') %}active-model{% endif %}">
+                            <span class="nav-model-title">Feature Importance &amp; SHAP</span>
+                            <span class="nav-model-desc">Gini MDI vs permutation drop</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- M4 Dropdown -->
+                <div class="nav-module-dropdown {% if active_module == 'm4' %}open-parent{% endif %}" id="nav-dropdown-m4">
+                    <button type="button" class="nav-module-btn {% if active_module == 'm4' %}active-module{% endif %}" onclick="toggleModuleNav('m4', event)">
+                        <span>M4: Unsupervised</span> <span class="chevron-icon">&#9662;</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="nav-dropdown-header">Module 4 Unsupervised Models</div>
+                        <a href="{{ url_for('m4.unsupervised') }}" class="nav-model-link {% if request.path.startswith('/unsupervised') or request.path.startswith('/clustering') or request.path.endswith('/kmeans') %}active-model{% endif %}">
+                            <span class="nav-model-title">K-Means &amp; Archetypes</span>
+                            <span class="nav-model-desc">Lloyd's K=4 &amp; Silhouette diagnostic</span>
+                        </a>
+                        <a href="{{ url_for('m4.hierarchical') }}" class="nav-model-link {% if request.path.endswith('/hierarchical') %}active-model{% endif %}">
+                            <span class="nav-model-title">Hierarchical Clustering</span>
+                            <span class="nav-model-desc">Agglomerative bottom-up dendrograms</span>
+                        </a>
+                        <a href="{{ url_for('m4.dbscan') }}" class="nav-model-link {% if request.path.endswith('/dbscan') %}active-model{% endif %}">
+                            <span class="nav-model-title">DBSCAN Density Clustering</span>
+                            <span class="nav-model-desc">Non-convex clusters &amp; noise points</span>
+                        </a>
+                        <a href="{{ url_for('m4.pca') }}" class="nav-model-link {% if request.path.endswith('/pca') %}active-model{% endif %}">
+                            <span class="nav-model-title">PCA &amp; Dimensionality</span>
+                            <span class="nav-model-desc">2D projection (71.38% variance)</span>
+                        </a>
+                        <a href="{{ url_for('m4.anomaly_detection') }}" class="nav-model-link {% if request.path.endswith('/anomaly-detection') %}active-model{% endif %}">
+                            <span class="nav-model-title">Anomaly Detection</span>
+                            <span class="nav-model-desc">Isolation Forest outlier profiling</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- M5 Dropdown -->
+                <div class="nav-module-dropdown {% if active_module == 'm5' %}open-parent{% endif %}" id="nav-dropdown-m5">
+                    <button type="button" class="nav-module-btn {% if active_module == 'm5' %}active-module{% endif %}" onclick="toggleModuleNav('m5', event)">
+                        <span>M5: Evaluation</span> <span class="chevron-icon">&#9662;</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="nav-dropdown-header">Module 5 Validation &amp; Calibration</div>
+                        <a href="{{ url_for('m5.holdout') }}" class="nav-model-link {% if request.path.endswith('/holdout') %}active-model{% endif %}">
+                            <span class="nav-model-title">3-Way Split Discipline</span>
+                            <span class="nav-model-desc">Train/Val/Test leak prevention</span>
+                        </a>
+                        <a href="{{ url_for('m5.kfold') }}" class="nav-model-link {% if request.path.endswith('/kfold') %}active-model{% endif %}">
+                            <span class="nav-model-title">Stratified K-Fold CV</span>
+                            <span class="nav-model-desc">K=5 class-balanced verification</span>
+                        </a>
+                        <a href="{{ url_for('m5.metrics') }}" class="nav-model-link {% if request.path.endswith('/metrics') %}active-model{% endif %}">
+                            <span class="nav-model-title">Comprehensive Metrics</span>
+                            <span class="nav-model-desc">ROC/PR curves &amp; threshold tuner</span>
+                        </a>
+                        <a href="{{ url_for('m5.validation') }}" class="nav-model-link {% if request.path.startswith('/valid') or request.path.endswith('/calibration') %}active-model{% endif %}">
+                            <span class="nav-model-title">50-Sample Calibration Lab</span>
+                            <span class="nav-model-desc">Platt Scaling &amp; Isotonic Brier</span>
+                        </a>
+                        <a href="{{ url_for('m5.tuning') }}" class="nav-model-link {% if request.path.endswith('/tuning') %}active-model{% endif %}">
+                            <span class="nav-model-title">Hyperparameter Tuning</span>
+                            <span class="nav-model-desc">Search methods &amp; learning curves</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- M6 Dropdown -->
+                <div class="nav-module-dropdown {% if active_module == 'm6' %}open-parent{% endif %}" id="nav-dropdown-m6">
+                    <button type="button" class="nav-module-btn {% if active_module == 'm6' %}active-module{% endif %}" onclick="toggleModuleNav('m6', event)">
+                        <span>M6: MLOps</span> <span class="chevron-icon">&#9662;</span>
+                    </button>
+                    <div class="nav-dropdown-menu">
+                        <div class="nav-dropdown-header">Module 6 ML Engineering</div>
+                        <a href="{{ url_for('m6.feature_store') }}" class="nav-model-link {% if request.path.endswith('/feature-store') %}active-model{% endif %}">
+                            <span class="nav-model-title">Feast Feature Store</span>
+                            <span class="nav-model-desc">Online-offline low latency sync</span>
+                        </a>
+                        <a href="{{ url_for('m6.packaging') }}" class="nav-model-link {% if request.path.endswith('/packaging') %}active-model{% endif %}">
+                            <span class="nav-model-title">Packaging &amp; ONNX</span>
+                            <span class="nav-model-desc">Artifact registry &amp; Model Card</span>
+                        </a>
+                        <a href="{{ url_for('m6.serving') }}" class="nav-model-link {% if request.path.endswith('/serving') %}active-model{% endif %}">
+                            <span class="nav-model-title">Production Serving</span>
+                            <span class="nav-model-desc">REST / FastAPI latency percentiles</span>
+                        </a>
+                        <a href="{{ url_for('m6.monitoring') }}" class="nav-model-link {% if request.path.endswith('/monitoring') %}active-model{% endif %}">
+                            <span class="nav-model-title">Drift Monitor &amp; PSI</span>
+                            <span class="nav-model-desc">Data &amp; concept drift signals</span>
+                        </a>
+                        <a href="{{ url_for('m6.retraining') }}" class="nav-model-link {% if request.path.endswith('/retraining') %}active-model{% endif %}">
+                            <span class="nav-model-title">Retraining Pipeline</span>
+                            <span class="nav-model-desc">Drift-triggered shadow deployment</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="header-status no-print">
+                <span class="status-indicator">
+                    <span class="status-dot"></span> Online (M1–M6)
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="content full-width-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>
+            PlacementPredict &mdash; Course: <strong>25SC2107E Machine Learning</strong> &bull; All 6 Modules Verified (M1–M6)<br>
+            <a href="{{ url_for('index') }}">Dashboard</a> &bull;
+            <a href="{{ url_for('m1.data_loading') }}">Dataset</a> &bull;
+            <a href="{{ url_for('m1.eda') }}">Analytics</a> &bull;
+            <a href="{{ url_for('m1.preprocessing') }}">Preprocessing</a> &bull;
+            <a href="{{ url_for('m2.linear_regression') }}">Linear</a> &bull;
+            <a href="{{ url_for('m2.logistic_regression') }}">Logistic</a> &bull;
+            <a href="{{ url_for('m3.tree_models') }}">Tree Models</a> &bull;
+            <a href="{{ url_for('m4.unsupervised') }}">Unsupervised</a> &bull;
+            <a href="{{ url_for('m5.validation') }}">Validation</a> &bull;
+            <a href="{{ url_for('m6.monitoring') }}">Drift Monitor</a>
+        </p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

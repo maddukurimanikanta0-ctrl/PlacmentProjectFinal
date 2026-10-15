@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Production Drift Monitoring &amp; PSI - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m6">Module 6: ML Engineering</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Drift Monitoring &amp; PSI</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 6 &bull; CO6</span>
+        <span class="concept-badge">Continuous Telemetry</span>
+        <span class="badge-dark">PSI Score: {{ psi_data.psi_score }} &bull; {{ psi_data.alert_level }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Production Drift Monitoring: PSI &amp; Telemetry
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Tracking Data Drift P(X), Concept Drift P(Y|X), and Label Drift P(Y) using the Population Stability Index (PSI) to detect covariate distribution shifts before model accuracy decays.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m6" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Covariate Shift Injection Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <div class="card-title">Deliberate Covariate Shift Injection Playground</div>
+  <p class="card-subtitle">Inject positive or negative shift into production student batches to observe real-time PSI alarms:</p>
+  <form action="{{ url_for('m6.monitoring') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 2; min-width: 220px;">
+      <label for="shift">Covariate Shift Magnitude (&Delta;): <strong>{{ shift }}</strong>
+        <input type="range" id="shift" name="shift" value="{{ shift }}" min="-0.30" max="0.40" step="0.05" oninput="document.getElementById('shift_val').innerText = this.value">
+      </label>
+      <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+        <span>-30% Drop (Severe Drift)</span>
+        <span id="shift_val" style="font-weight: 700; color: var(--text-primary);">{{ shift }}</span>
+        <span>+40% Rise (Upward Shift)</span>
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Inject Shift &amp; Compute PSI</button>
+    </div>
+  </form>
+</div>
+
+<!-- PSI Alarm KPI Grid -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Population Stability Index (PSI)</div>
+    <div class="kpi-val" style="color: {% if psi_data.psi_score < 0.1 %}#16a34a{% elif psi_data.psi_score <= 0.25 %}#d97706{% else %}#dc2626{% endif %};">
+      {{ psi_data.psi_score }}
+    </div>
+    <div class="kpi-sub">Monitored Feature: {{ psi_data.feature_monitored }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Alert Status</div>
+    <div class="kpi-val" style="font-size: 1.25rem;">{{ psi_data.alert_level }}</div>
+    <div class="kpi-sub">Automated Monitoring Signal</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Recommended System Action</div>
+    <div class="kpi-val" style="font-size: 0.95rem; font-weight: 600; line-height: 1.4;">{{ psi_data.recommended_action }}</div>
+    <div class="kpi-sub">MLOps Orchestrator Hook</div>
+  </div>
+</div>
+
+<!-- Quantile Shift Table -->
+<div class="card">
+  <div class="card-title">Quantile Population Distribution Breakdown</div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Quantile Bin</th>
+          <th>Baseline Training (%)</th>
+          <th>Production Serving Batch (%)</th>
+          <th>Distribution Shift</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for q in psi_data.quantiles_breakdown %}
+        <tr>
+          <td><strong>{{ q.bin }}</strong></td>
+          <td>{{ q.baseline_pct }}%</td>
+          <td><strong>{{ q.prod_pct }}%</strong></td>
+          <td>
+            {% set diff = (q.prod_pct - q.baseline_pct)|round(1) %}
+            <span style="color: {% if diff > 5 %}#dc2626{% elif diff < -5 %}#d97706{% else %}#16a34a{% endif %};">
+              {{ "+" if diff > 0 else "" }}{{ diff }}%
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+/* ==========================================================================
+   print.css — Clean PDF Print Stylesheet (Ctrl + P Academic Report)
+   ========================================================================== */
+@media print {
+  .no-print, .dashboard-nav-bar, .mobile-nav-toggle, .presets-banner {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+  }
+
+  .container, .content, .full-width-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .card, .summary-box, .result-box, .kpi-card {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 1rem !important;
+  }
+
+  .module-view-container {
+    display: block !important;
+    page-break-before: always;
+  }
+
+  table, .data-table {
+    border: 1px solid #000000 !important;
+  }
+
+  th, td {
+    border: 1px solid #e2e8f0 !important;
+    color: #000000 !important;
+  }
+}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Hyperparameter Tuning &amp; Learning Curves - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m5">Module 5: Evaluation</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Tuning &amp; Learning Curves</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 5 &bull; CO5</span>
+        <span class="concept-badge">Bias-Variance Diagnosis</span>
+        <span class="badge-dark">Search: Grid / Random / Optuna</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Hyperparameter Tuning &amp; Diagnostic Learning Curves
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Diagnosing underfitting (high bias), overfitting (high variance), and data scarcity from learning curves plotting training and validation accuracy as sample size grows.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m5" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Search Algorithms Comparison -->
+<div class="card">
+  <div class="card-title">Hyperparameter Search Paradigms Comparison</div>
+  <p class="card-subtitle">Why random search and Bayesian optimization consistently outperform exhaustive grid search:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Search Strategy</th>
+          <th>Exploration Mechanism</th>
+          <th>Sample Efficiency</th>
+          <th>Effective Hyperparameter Dimension</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Grid Search</strong></td>
+          <td>Exhaustive Cartesian product over discrete grid</td>
+          <td>Poor (wastes compute evaluating uninfluential parameters)</td>
+          <td>Fixed grid resolution; suffers curse of dimensionality</td>
+        </tr>
+        <tr>
+          <td><strong>Random Search (Bergstra-Bengio)</strong></td>
+          <td>Uniform random sampling from continuous probability densities</td>
+          <td>High (efficiently explores distinct values per dimension)</td>
+          <td>Discovers near-optimal points in 10x fewer iterations</td>
+        </tr>
+        <tr>
+          <td><strong>Bayesian Optimization (Optuna TPE)</strong></td>
+          <td>Tree-structured Parzen Estimators modelling P(param | score)</td>
+          <td>Highest (balances exploration of uncertainty vs exploitation)</td>
+          <td>Adaptive sequential define-by-run trial guidance</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Learning Curve Diagnosis -->
+<div class="card">
+  <div class="card-title">Empirical Learning Curve Data</div>
+  <p class="card-subtitle">{{ curve_data.diagnosis }}</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Training Samples Evaluated</th>
+          <th>Train Accuracy</th>
+          <th>Cross-Validation Accuracy</th>
+          <th>Generalization Gap</th>
+          <th>Diagnostic Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pt in curve_data.curve_points %}
+        <tr>
+          <td><strong>{{ pt.train_samples }} records</strong></td>
+          <td>{{ (pt.train_accuracy * 100)|round(2) }}%</td>
+          <td><strong style="color: #15803d;">{{ (pt.val_accuracy * 100)|round(2) }}%</strong></td>
+          <td>{{ ((pt.train_accuracy - pt.val_accuracy) * 100)|round(2) }}%</td>
+          <td>{% if loop.first %}High Initial Variance{% elif loop.last %}Healthy Convergence (Low Bias &amp; Low Variance){% else %}Variance Shrinking{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

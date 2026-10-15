@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Regularization Lab (Ridge, Lasso, Elastic Net) - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m2">Module 2: Linear Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Regularization &amp; Sparsity Lab</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 2 &bull; CO2</span>
+        <span class="concept-badge">Regularization Geometry</span>
+        <span class="badge-dark">&alpha; = {{ alpha }} &bull; L1-Ratio = {{ l1_ratio }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Regularization Lab — Ridge (L2), Lasso (L1) &amp; Elastic Net
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Investigating the geometric picture of why L1 regularization induces exact coefficient sparsity (feature selection) while L2 produces proportional shrinkage.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m2" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Regularization Controller Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m2.regularization') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 160px;">
+      <label for="alpha">Regularization Strength (&alpha; / &lambda;):
+        <input type="number" step="0.1" min="0.01" max="100.0" id="alpha" name="alpha" value="{{ alpha }}">
+      </label>
+    </div>
+    <div style="flex: 1; min-width: 160px;">
+      <label for="l1_ratio">Elastic Net L1 Ratio:
+        <input type="number" step="0.05" min="0.0" max="1.0" id="l1_ratio" name="l1_ratio" value="{{ l1_ratio }}">
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Compute Sparsity Path</button>
+    </div>
+  </form>
+</div>
+
+<!-- Comparison Matrix -->
+<div class="kpi-grid">
+  {% for name, res in reg_data.comparison.items() %}
+  <div class="kpi-card">
+    <div class="kpi-title">{{ name }}</div>
+    <div class="kpi-val">{{ res.r2_score }} <small style="font-size: 0.85rem; font-weight: normal; color: var(--text-muted);">R&sup2;</small></div>
+    <div class="kpi-sub">
+      Active Features: <strong>{{ res.active_features_count }}</strong> / 10 &bull;
+      Zeroed (Sparse): <strong style="color: #dc2626;">{{ res.zero_features_count }}</strong>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Coefficient Table -->
+<div class="card">
+  <div class="card-title">Feature Coefficients &amp; Sparsity Breakdown</div>
+  <p class="card-subtitle">Observe how Lasso drives redundant or low-impact features to exact zero (0.0000):</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Student Feature</th>
+          <th>Ridge (L2) Coef</th>
+          <th>Lasso (L1) Coef</th>
+          <th>Elastic Net Coef</th>
+          <th>Sparsity Effect</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for feat in reg_data.features %}
+        <tr>
+          <td><strong>{{ feat }}</strong></td>
+          <td>{{ reg_data.comparison['Ridge (L2)'].coefficients[feat] }}</td>
+          <td>
+            {% set l_val = reg_data.comparison['Lasso (L1)'].coefficients[feat] %}
+            <span style="font-weight: 600; color: {% if l_val == 0.0 %}#dc2626{% else %}#16a34a{% endif %};">
+              {{ l_val }} {% if l_val == 0.0 %}(Zeroed Out){% endif %}
+            </span>
+          </td>
+          <td>{{ reg_data.comparison['Elastic Net'].coefficients[feat] }}</td>
+          <td>
+            {% if l_val == 0.0 %}
+              <span class="badge-dark" style="background:#fee2e2; color:#991b1b; border-color:#fecaca;">Pruned (Sparse)</span>
+            {% else %}
+              <span class="badge-dark" style="background:#dcfce7; color:#166534; border-color:#bbf7d0;">Retained</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

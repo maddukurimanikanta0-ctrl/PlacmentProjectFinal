@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Decision Trees &amp; Cost-Complexity Pruning - PlacementPredict{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m3">Module 3: Tree Models</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">Decision Tree &amp; CCP Pruning</span>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 3 &bull; CO3</span>
+        <span class="concept-badge">Recursive Partitioning</span>
+        <span class="badge-dark">Depth: {{ dt_res.tree_depth }} &bull; Leaves: {{ dt_res.n_leaves }}</span>
+      </div>
+      <h1 style="color: var(--text-primary); font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Decision Trees &amp; Cost-Complexity Pruning (CCP)
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0; max-width: 900px;">
+        Greedy top-down recursive splitting using Gini Impurity (1 - &sum; p<sub>i</sub><sup>2</sup>), stopping criteria, and post-pruning via cost-complexity parameter &alpha;<sub>eff</sub>.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m3" class="btn-back-dashboard">&larr; Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Tuning Form -->
+<div class="card no-print" style="margin-bottom: 1.5rem;">
+  <form action="{{ url_for('m3.decision_tree') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px;">
+      <label for="max_depth">Max Tree Depth:
+        <input type="number" id="max_depth" name="max_depth" value="{{ max_depth }}" min="2" max="15">
+      </label>
+    </div>
+    <div style="flex: 1; min-width: 160px;">
+      <label for="ccp_alpha">Cost-Complexity &alpha;:
+        <input type="number" step="0.001" min="0.0" max="0.1" id="ccp_alpha" name="ccp_alpha" value="{{ ccp_alpha }}">
+      </label>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.5rem;">Fit &amp; Prune Tree</button>
+    </div>
+  </form>
+</div>
+
+<!-- Performance Metrics -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-title">Train Accuracy</div>
+    <div class="kpi-val">{{ (dt_res.train_accuracy * 100)|round(2) }}%</div>
+    <div class="kpi-sub">In-Sample Fit</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Test Accuracy</div>
+    <div class="kpi-val" style="color: #16a34a;">{{ (dt_res.test_accuracy * 100)|round(2) }}%</div>
+    <div class="kpi-sub">Held-Out Generalization</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Test ROC-AUC</div>
+    <div class="kpi-val">{{ dt_res.test_roc_auc }}</div>
+    <div class="kpi-sub">Rank Order Discrimination</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-title">Tree Complexity</div>
+    <div class="kpi-val">{{ dt_res.n_leaves }} <small style="font-size:0.85rem; font-weight:normal; color:var(--text-muted);">Leaves</small></div>
+    <div class="kpi-sub">Max Depth: {{ dt_res.tree_depth }}</div>
+  </div>
+</div>
+
+<!-- Pruning Path Table -->
+<div class="card">
+  <div class="card-title">Cost-Complexity Pruning (CCP) Path</div>
+  <p class="card-subtitle">As effective &alpha; increases, subtrees with minimal impurity reduction are pruned to prevent overfitting:</p>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Pruning Step</th>
+          <th>Effective &alpha;</th>
+          <th>Total Tree Impurity</th>
+          <th>Pruning Effect</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for step in dt_res.pruning_path %}
+        <tr>
+          <td>Step {{ loop.index }}</td>
+          <td><code>{{ step.alpha }}</code></td>
+          <td>{{ step.impurity }}</td>
+          <td>{% if loop.first %}Fully Unpruned Complex Tree{% elif loop.last %}Strongly Regularized Shallow Tree{% else %}Intermediate Pruned Subtree{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

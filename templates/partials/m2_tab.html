@@ -1,0 +1,74 @@
+<!-- Module 2 View Container -->
+<div class="module-view-container" id="module-view-m2">
+  <div class="module-header-banner">
+    <div class="module-header-info">
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.35rem; align-items: center;">
+        <span class="module-badge">Module 2 &bull; CO2</span>
+        <span class="concept-badge">Linear Models at Depth</span>
+      </div>
+      <h2>Supervised Learning — Linear Models at Depth</h2>
+      <p>Closed-form normal equations, gradient descent, L1/L2 regularization geometry, binary cross-entropy, and multinomial softmax classification.</p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('m2.logistic_regression') }}" class="btn btn-primary">&rarr; Logistic Classifier</a>
+    </div>
+  </div>
+
+  <div class="concepts-grid">
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Regression Core</span>
+        <h3 class="concept-title">Linear Regression &amp; Salary Package</h3>
+        <p class="concept-summary">Predicting student starting salary package (LPA) from academic and test performance using ordinary least squares.</p>
+        <ul class="concept-bullets">
+          <li>Closed-form normal equations: &theta; = (X<sup>T</sup>X)<sup>-1</sup>X<sup>T</sup>y</li>
+          <li>R&sup2; = 0.768 multiple linear regression fit</li>
+          <li>Interactive salary package calculator</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m2.linear_regression') }}" class="concept-action-btn">Launch Linear Regressor &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Classification</span>
+        <h3 class="concept-title">Logistic Regression &amp; Sigmoid Boundary</h3>
+        <p class="concept-summary">Binary classification with log-loss optimization, hyperplane decision boundaries, and odds-ratio interpretations.</p>
+        <ul class="concept-bullets">
+          <li>Sigmoid activation: P(y=1) = 1 / (1 + e<sup>-z</sup>)</li>
+          <li>Ridge (L2) weight penalization avoiding overconfidence</li>
+          <li>Interactive probability calculator with confusion matrix</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m2.logistic_regression') }}" class="concept-action-btn">Launch Logistic Model &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Regularization Lab</span>
+        <h3 class="concept-title">L1 Lasso, L2 Ridge &amp; Elastic Net</h3>
+        <p class="concept-summary">Geometric analysis of regularization constraints. Discovering why L1 diamond boundaries induce exact feature sparsity.</p>
+        <ul class="concept-bullets">
+          <li>L1 Lasso automatic feature selection (zeroing out weights)</li>
+          <li>L2 Ridge spherical weight shrinkage</li>
+          <li>Elastic Net convex balance between L1 and L2</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m2.regularization') }}" class="concept-action-btn">Explore Regularization Lab &rarr;</a>
+    </div>
+
+    <div class="concept-card">
+      <div>
+        <span class="concept-badge">Multi-Class Extension</span>
+        <h3 class="concept-title">Softmax / Multinomial Logistic Regression</h3>
+        <p class="concept-summary">Extending logistic regression to multi-class prediction: Dream Package (&gt;8 LPA), Core (5-8 LPA), and Foundational (&lt;5 LPA).</p>
+        <ul class="concept-bullets">
+          <li>Softmax normalization over K class logits</li>
+          <li>Cross-entropy loss with LBFGS optimization</li>
+          <li>Class-specific feature coefficient vectors</li>
+        </ul>
+      </div>
+      <a href="{{ url_for('m2.softmax_regression') }}" class="concept-action-btn">Explore Softmax Model &rarr;</a>
+    </div>
+  </div>
+</div>

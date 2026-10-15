@@ -1,0 +1,49 @@
+/* ==========================================================================
+   variables.css — Design Tokens & Two-Tone Neutral Theme Palette
+   ========================================================================== */
+:root {
+  /* Primary Two-Tone Neutral Palette */
+  --dark-neutral: #0f172a;
+  --dark-neutral-hover: #1e293b;
+  --dark-neutral-muted: #334155;
+  --light-neutral: #f8fafc;
+  --light-surface: #ffffff;
+  --light-subtle: #f1f5f9;
+
+  /* Borders & Dividers */
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-dark: #0f172a;
+
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-on-dark: #f8fafc;
+  --text-on-dark-muted: #94a3b8;
+
+  /* Functional Status Accents */
+  --status-success-bg: #f0fdf4;
+  --status-success-border: #bbf7d0;
+  --status-success-text: #166534;
+  --status-danger-bg: #fef2f2;
+  --status-danger-border: #fecaca;
+  --status-danger-text: #991b1b;
+  --status-info-bg: #f0f9ff;
+  --status-info-border: #bae6fd;
+  --status-info-text: #0369a1;
+  --status-warning-bg: #fffbeb;
+  --status-warning-border: #fde68a;
+  --status-warning-text: #92400e;
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 4px 6px -1px rgba(15, 23, 42, 0.08);
+  --shadow-dropdown: 0 10px 15px -3px rgba(15, 23, 42, 0.25), 0 4px 6px -2px rgba(15, 23, 42, 0.15);
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+}

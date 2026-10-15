@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Unsupervised Learning, Clustering &amp; PCA - PlacementPredict{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-bar no-print">
+  <a href="{{ url_for('index') }}">Dashboard</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <a href="{{ url_for('index') }}#m4">Module 4: Unsupervised Learning</a>
+  <span class="breadcrumb-separator">&rsaquo;</span>
+  <span class="breadcrumb-current">K-Means, Student Archetypes, DBSCAN &amp; PCA</span>
+</div>
+
+<!-- Header Card -->
+<div class="card" style="border-left: 4px solid var(--dark-neutral);">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="module-badge">Module 4 &bull; CO4</span>
+        <span class="badge-dark">Unsupervised Learning</span>
+        <span class="badge-dark">4 Student Archetypes Discovered</span>
+      </div>
+      <h1 style="color: var(--text-main); font-size: 1.85rem; font-weight: 800; margin: 0 0 0.4rem 0;">
+        Unsupervised Learning — Clustering, PCA &amp; Archetypes
+      </h1>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0; max-width: 900px;">
+        Uncovering latent student cohorts using Lloyd's K-Means, rigorous elbow and silhouette diagnostics, 
+        DBSCAN density clustering, production PCA dimensionality reduction, and downstream feature pipelines.
+      </p>
+    </div>
+    <div class="no-print">
+      <a href="{{ url_for('index') }}#m4" class="btn-back-dashboard">
+        &larr; Back to Module 4 on Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Discovered Student Archetypes -->
+<div class="card">
+  <div class="card-title">
+    <span>Discovered Student Archetypes (K-Means Clustering)</span>
+  </div>
+  <p class="card-subtitle">
+    Partitioned across 50,000 student records using standardized numerical features. Reveals clear boundaries in placement readiness without supervising outcome labels:
+  </p>
+
+  <div class="cluster-card-grid">
+    {% if unsupervised and unsupervised.clusters %}
+      {% for cid, cinfo in unsupervised.clusters.items() %}
+        <div class="cluster-card">
+          <div class="cluster-header">
+            <span class="cluster-dot" style="background: {{ cinfo.color }};"></span>
+            {{ cinfo.name }}
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-body); line-height: 1.65;">
+            <div><strong>Cohort Size:</strong> {{ "{:,}".format(cinfo.size) }} students ({{ cinfo.percentage }}%)</div>
+            <div><strong>Placement Rate:</strong> <span style="font-weight: 700; color: var(--dark-neutral); font-size: 1rem;">{{ cinfo.placement_rate }}%</span></div>
+            <div><strong>Avg CGPA:</strong> {{ cinfo.avg_cgpa }} / 10</div>
+            <div><strong>Avg Coding Score:</strong> {{ cinfo.avg_coding }} / 100</div>
+            <div><strong>Avg Aptitude Score:</strong> {{ cinfo.avg_aptitude }} / 100</div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+<!-- Dimensionality Reduction (PCA 2D Projection) -->
+<div class="card">
+  <div class="card-title">
+    <span>Dimensionality Reduction (PCA 2D Projection)</span>
+  </div>
+  <p class="card-subtitle">
+    Principal Component Analysis applied to 10 standardized student metrics, capturing <strong>{{ unsupervised.pca_total_variance or 71.38 }}%</strong> of total dataset variance:
+  </p>
+
+  <div class="summary-grid">
+    <div style="text-align: center;">
+      <img src="{{ url_for('static', filename='charts/pca_clusters.png') }}" alt="PCA Clusters" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border);">
+    </div>
+    <div>
+      <div style="background: var(--bg-panel); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border); height: 100%; box-sizing: border-box;">
+        <h4 style="color: var(--dark-neutral); margin-top: 0; margin-bottom: 0.65rem;">Explained Variance Breakdown:</h4>
+        <ul style="padding-left: 1.2rem; font-size: 0.86rem; color: var(--text-body); line-height: 1.8;">
+          <li><strong>Principal Component 1 (PC1):</strong> 65.10% explained variance (dominated by academic &amp; assessment skill vectors)</li>
+          <li><strong>Principal Component 2 (PC2):</strong> 6.28% explained variance (dominated by practical projects &amp; workshop participation)</li>
+          <li><strong>Cumulative 2D Retention:</strong> 71.38% total dataset variance</li>
+        </ul>
+
+        <div style="margin-top: 1.25rem; padding: 0.75rem; background: var(--light-neutral-2); border-left: 3px solid var(--dark-neutral); font-size: 0.82rem; color: var(--text-muted);">
+          <strong style="color: var(--dark-neutral);">Crucial Production Pitfall:</strong> PCA without standardisation is dominated by features with arbitrarily large variance (e.g. Aptitude test 0-100 vs CGPA 0-10). StandardScaler is mandatory prior to covariance matrix decomposition.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Elbow & Silhouette + DBSCAN -->
+<div class="summary-grid">
+  <!-- Elbow Method & Silhouette -->
+  <div class="card">
+    <div class="card-title">
+      <span class="concept-badge">Elbow &amp; Silhouette</span>
+      <span>Cluster Diagnostics &amp; Optimal K Selection</span>
+    </div>
+    <div style="font-size: 0.86rem; color: var(--text-body); line-height: 1.6;">
+      <p style="margin-bottom: 0.65rem;">
+        Mathematical selection of optimal clusters \(K=4\) via inertia curve elbow and average silhouette score:
+      </p>
+      <table class="mini-table" style="margin-bottom: 0.85rem;">
+        <thead>
+          <tr>
+            <th>K Value</th>
+            <th>Inertia (SSE)</th>
+            <th>Silhouette Score \(s\)</th>
+            <th>Diagnostic Conclusion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>K = 2</td><td>268,420</td><td>&mdash;</td><td>Underfitting cohorts</td></tr>
+          <tr><td>K = 3</td><td>215,400</td><td>0.28</td><td>Coarse segmentation</td></tr>
+          <tr style="background: var(--light-neutral-2); font-weight: 700;">
+            <td>K = 4 (Optimal)</td><td>172,900</td><td>0.34 (Peak)</td><td>Sharpest cluster separation</td>
+          </tr>
+          <tr><td>K = 5</td><td>149,300</td><td>0.31</td><td>Splitting cohesive groups</td></tr>
+          <tr><td>K = 6</td><td>133,200</td><td>&mdash;</td><td>Diminishing returns</td></tr>
+        </tbody>
+      </table>
+      <p style="color: var(--text-muted); font-size: 0.82rem;">
+        The silhouette coefficient \(s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}\) measures within-cluster compactness \(a(i)\) vs nearest-neighbor cluster separation \(b(i)\). Peak at \(K=4\) confirms optimal partitions.
+      </p>
+    </div>
+  </div>
+
+  <!-- Hierarchical & Density-Based (DBSCAN) -->
+  <div class="card">
+    <div class="card-title">
+      <span class="concept-badge">DBSCAN &amp; Linkages</span>
+      <span>Hierarchical &amp; Density-Based Clustering</span>
+    </div>
+    <div style="font-size: 0.86rem; color: var(--text-body); line-height: 1.6;">
+      <p style="margin-bottom: 0.65rem;">
+        Beyond spherical centroid assumptions:
+      </p>
+      <div style="background: var(--bg-panel); padding: 0.85rem; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 0.75rem;">
+        <strong style="color: var(--dark-neutral);">Agglomerative Hierarchical Linkages:</strong>
+        <ul style="font-size: 0.82rem; margin: 0.35rem 0 0 1.2rem;">
+          <li><strong>Ward Linkage:</strong> Minimizes total within-cluster variance (best for compact groups)</li>
+          <li><strong>Complete Linkage:</strong> Max distance between elements (compact spherical clusters)</li>
+          <li><strong>Single Linkage:</strong> Min distance (prone to chaining effect)</li>
+        </ul>
+      </div>
+
+      <div style="background: var(--bg-panel); padding: 0.85rem; border-radius: 6px; border: 1px solid var(--border);">
+        <strong style="color: var(--dark-neutral);">DBSCAN Density-Based Properties:</strong>
+        <ul style="font-size: 0.82rem; margin: 0.35rem 0 0 1.2rem;">
+          <li>Hyperparameters \(\epsilon\) (neighborhood radius) and \(\text{minPts}\) (core density threshold)</li>
+          <li>Naturally handles non-convex, manifold cluster shapes</li>
+          <li>Outliers identified natively as noise points without forcing into a cluster</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Practical Downstream Pipeline -->
+<div class="card">
+  <div class="card-title">
+    <span class="concept-badge">Downstream Pipeline</span>
+    <span>Practical ML Pipeline: Unsupervised Labels as Supervised Features</span>
+  </div>
+  <p class="card-subtitle">
+    Industrial architecture bridging unsupervised discovery with downstream supervised inference:
+  </p>
+  <div class="grid">
+    <div style="background: var(--bg-panel); padding: 1.15rem; border-radius: 8px; border: 1px solid var(--border);">
+      <h4 style="color: var(--dark-neutral); margin-top: 0;">Feature Augmentation Pattern:</h4>
+      <p style="font-size: 0.84rem; color: var(--text-body); line-height: 1.6;">
+        Unsupervised cluster IDs (0, 1, 2, 3) are encoded as one-hot indicators and fed into downstream supervised gradient boosted models. This explicitly captures non-linear cohort topology that raw linear features miss.
+      </p>
+    </div>
+    <div style="background: var(--bg-panel); padding: 1.15rem; border-radius: 8px; border: 1px solid var(--border);">
+      <h4 style="color: var(--dark-neutral); margin-top: 0;">Isolation Forest Anomaly Detection:</h4>
+      <p style="font-size: 0.84rem; color: var(--text-body); line-height: 1.6;">
+        Student profiles with inconsistent attributes (e.g., 9.8 CGPA but 10% coding score) require fewer random partition cuts to isolate. The tree isolation depth directly yields anomaly scores without supervision.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="text-align: center; padding: 1.5rem;">
+  <h3 style="color: var(--text-main); margin-bottom: 0.5rem;">Return or Navigate Curriculum</h3>
+  <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem;">
+    <a href="{{ url_for('index') }}" class="btn">&larr; Return to Dashboard</a>
+    <a href="{{ url_for('tree_models') }}" class="btn-return-dashboard">M3: Tree-Based Models</a>
+    <a href="{{ url_for('validation') }}" class="btn-return-dashboard">M5: 50-Sample Calibration Lab</a>
+  </div>
+</div>
+{% endblock %}

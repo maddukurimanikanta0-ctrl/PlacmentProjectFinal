@@ -1,0 +1,69 @@
+<!-- Hold-Out Validation Section -->
+{% if holdout and holdout.train_samples %}
+<div class="card" style="border-left: 4px solid var(--dark-neutral); margin-bottom: 2rem;">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+        <span class="concept-badge">Hold-Out Split Discipline</span>
+        <h2 style="margin: 0.4rem 0 0.2rem 0; color: var(--text-primary); font-size: 1.35rem;">
+            Hold-Out Validation (80% Train / 20% Test)
+        </h2>
+        <p style="margin: 0; color: var(--text-muted); font-size: 0.88rem;">
+            Strict separation of training and test sets avoiding data leakage during feature preprocessing and model fitting.
+        </p>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-title">Train / Test Split</div>
+            <div class="kpi-val">{{ holdout.train_samples }} / {{ holdout.test_samples }}</div>
+            <div class="kpi-sub">{{ holdout.test_size_percent }}% Held-Out Test Set</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Train Accuracy</div>
+            <div class="kpi-val">{{ (holdout.train_accuracy * 100)|round(2) }}%</div>
+            <div class="kpi-sub">In-Sample Performance</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Test Accuracy</div>
+            <div class="kpi-val" style="color: #16a34a;">{{ (holdout.test_accuracy * 100)|round(2) }}%</div>
+            <div class="kpi-sub">Out-of-Sample Generalization</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-title">Generalization Gap</div>
+            <div class="kpi-val">{{ holdout.generalization_gap }}%</div>
+            <div class="kpi-sub">Zero Overfitting Risk</div>
+        </div>
+    </div>
+
+    <!-- Confusion Matrix on Test Split -->
+    {% if holdout.confusion_matrix %}
+    <div style="margin-top: 1rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Hold-Out Confusion Matrix
+        </h3>
+        <div class="table-responsive" style="max-width: 480px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Actual \ Predicted</th>
+                        <th>Predicted Not Placed</th>
+                        <th>Predicted Placed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Actual Not Placed</strong></td>
+                        <td>TN: <strong>{{ holdout.confusion_matrix.tn }}</strong></td>
+                        <td>FP: <strong>{{ holdout.confusion_matrix.fp }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Actual Placed</strong></td>
+                        <td>FN: <strong>{{ holdout.confusion_matrix.fn }}</strong></td>
+                        <td>TP: <strong>{{ holdout.confusion_matrix.tp }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}

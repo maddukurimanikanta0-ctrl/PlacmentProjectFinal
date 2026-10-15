@@ -1,0 +1,11 @@
+/* ==========================================================================
+   style.css — PlacementPredict Master Stylesheet
+   Imports modular stylesheets (all individual files < 250 lines)
+   ========================================================================== */
+@import url("variables.css");
+@import url("base.css");
+@import url("header_nav.css");
+@import url("components.css");
+@import url("dashboard.css");
+@import url("results_archetypes.css");
+@import url("print.css");
